@@ -38,7 +38,7 @@ function love.update(dt)
     if love.keyboard.isDown("d") then
         player.x = player.x + player.speed * dt
         player.sprite = p_right
-
+            
     end
 
 
