@@ -76,11 +76,6 @@ function love.draw()
 
 
 
--- aasasasa
-
-
-
-
 
 
     love.graphics.draw(player.sprite, player.x, player.y)
