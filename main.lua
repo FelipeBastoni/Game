@@ -3,9 +3,9 @@
 
 function love.load()
 
-    p_up = love.graphics.newImage("prime2.png") 
-    p_right = love.graphics.newImage("player.jpg")
-    p_left = love.graphics.newImage("player2.png")
+    p_up = love.graphics.newImage("primeofc.png") 
+    p_right = love.graphics.newImage("primeofc.jpg")
+    p_left = love.graphics.newImage("primeofc.png")
 
     grama = love.graphics.newImage("grama.png")
 
@@ -75,7 +75,6 @@ function love.draw()
     end
 
 
--- addadaddfffffffffffffffff
 
 
     love.graphics.draw(player.sprite, player.x, player.y)
