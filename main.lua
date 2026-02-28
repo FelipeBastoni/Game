@@ -75,7 +75,7 @@ function love.draw()
     end
 
 
--- dadadadadaddaffffffffffffffffff
+
 
     love.graphics.draw(player.sprite, player.x, player.y)
 
