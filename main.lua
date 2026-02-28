@@ -5,7 +5,7 @@ function love.load()
 
     p_up = love.graphics.newImage("primeofc.png") 
     p_right = love.graphics.newImage("primestp1.png")
-    p_left = love.graphics.newImage("primeofc.png")
+    p_left = love.graphics.newImage("primestp2.png")
 
     grama = love.graphics.newImage("grama.png")
 
