@@ -4,7 +4,7 @@
 function love.load()
 
     p_up = love.graphics.newImage("primeofc.png") 
-    p_right = love.graphics.newImage("primeofc.jpg")
+    p_right = love.graphics.newImage("primestp1.png")
     p_left = love.graphics.newImage("primeofc.png")
 
     grama = love.graphics.newImage("grama.png")
@@ -13,7 +13,7 @@ function love.load()
     player.x = 300
     player.y = 200
     player.speed = 200
-    player.sprite = p_right
+    player.sprite = p_up
 
 
     love.window.setMode(1920, 1080)
