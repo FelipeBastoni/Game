@@ -5,7 +5,8 @@ function love.load()
 
     p_default = {
         love.graphics.newImage("primeofc.png"), 
-        love.graphics.newImage("primeofcesq.png") 
+        love.graphics.newImage("primeofcesq.png"),
+        love.graphics.newImage("primeup.png") 
 
     }
 
@@ -57,6 +58,11 @@ function love.update(dt)
 
     end
 
+    if position == "U" then
+
+        player.sprite = p_default[3]
+
+    end
 
 
 
@@ -65,6 +71,21 @@ function love.update(dt)
     if love.keyboard.isDown("w") then
         
         player.y = player.y - player.speed * dt
+        player.sprite = p_default[3]
+
+
+        if step > 0.25 then
+            player.sprite = p_default[3]
+
+            if step > 0.5 then
+                step = 0
+            end
+        end
+
+        position = "U"
+
+
+
 
     end
 
