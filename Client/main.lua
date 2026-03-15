@@ -4,7 +4,7 @@
 local enet = require("enet")
 
 local host = enet.host_create()
-local server = host:connect("192.168.2.115:6789")
+local server = host:connect("--colocar IP do server:6789")
 
 
 
