@@ -4,7 +4,7 @@
 local enet = require("enet")
 
 local host = enet.host_create()
-local server = host:connect("--colocar IP do server:6789")
+local server = host:connect("IP do Servidor:6789")
 
 
 
@@ -337,16 +337,119 @@ function love.update(dt)
 
 
 
-
-
-
     --Envia posição ao Server
 
-    if step >= 0.03 then
+    if step >= 0.041 then
 
-        messager("w", player.x, player.y, player.speed)
+        messager(position, player.x, player.y, player.speed)
 
     end
+
+
+
+    --Informação Inimigo
+
+
+    if en == true then
+
+        inimigo.x = t[2]
+        inimigo.y = t[3]
+        
+        if t[4] == "U" then
+
+            inimigo.sprite = p_up[1]
+
+            if step > 0.25 then
+                inimigo.sprite = p_up[2]
+
+                if step > 0.5 then
+                    step = 0
+                end
+
+            end
+
+        end
+
+
+        if t[4] == "S" then
+
+            inimigo.sprite = p_down[1]
+
+            if step > 0.25 then
+                inimigo.sprite = p_down[2]
+            
+                if step > 0.5 then
+                    step = 0
+                end
+
+            end
+
+        end
+
+
+        if t[4] == "E" then
+
+            inimigo.sprite = p_left[1]
+
+            if step > 0.25 then
+                inimigo.sprite = p_left[2]
+
+                if step > 0.5 then
+                    step = 0
+                end
+
+            end
+        
+        end
+
+
+        if t[4] == "D" then
+
+            inimigo.sprite = p_right[1]
+
+            if step > 0.25 then
+                inimigo.sprite = p_right[2]
+
+                if step > 0.5 then
+                    step = 0
+                end
+            
+            end
+
+        end
+
+
+        if t[4] == "PU" then
+
+            inimigo.sprite = p_default[4]
+
+        end
+
+
+        if t[4] == "PS" then
+
+            inimigo.sprite = p_default[3]
+
+        end
+
+
+        if t[4] == "PE" then
+
+            inimigo.sprite = p_default[2]
+
+        end
+
+
+        if t[4] == "PD" then
+
+            inimigo.sprite = p_default[1]
+
+        end
+
+
+    end
+
+
 
 end
 
@@ -396,14 +499,7 @@ function love.draw()
 
  --Gerador de Inimigo
 
-    if en == true then
-
-        inimigo.x = t[2]
-        inimigo.y = t[3]
-
-        love.graphics.draw(inimigo.sprite, inimigo.x, inimigo.y)
-
-    end
+    love.graphics.draw(inimigo.sprite, inimigo.x, inimigo.y)
 
 
 
