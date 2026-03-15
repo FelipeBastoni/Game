@@ -49,7 +49,16 @@ function love.load()
 en = {}
 en.x = 0
 en.y = 0
-en.s = 0
+en.s = ""
+
+player1 = {}
+player1.con = ""
+player1.x = 0
+player1.y = 0
+player1.hp = 0
+
+
+
 
 end
 
@@ -109,46 +118,70 @@ function love.update(dt)
      --Calcula as Movimentações
 
 
-        if t[1] == "w" then 
+        if t[1] == en.s and en.s == "U" and t[2] == en.x and t[3] == en.y then
+            messager(event.peer,"en", en.x,en.y,"PU")
+
+
+        elseif t[1] == en.s and en.s == "S" and t[2] == en.x and t[3] == en.y then
+            messager(event.peer,"en", en.x,en.y,"PS")
+
+
+        elseif t[1] == en.s and en.s == "E" and t[2] == en.x and t[3] == en.y then
+            messager(event.peer,"en", en.x,en.y,"PE")
+
+
+        elseif t[1] == en.s and en.s == "D" and t[2] == en.x and t[3] == en.y then
+            messager(event.peer,"en", en.x,en.y,"PD")
+
+       
+
+            
+        elseif t[1] == "U" then 
 
             en.x = t[2]
             en.y = t[3]
+            en.s = t[1]
+
+            messager(event.peer,"en", en.x,en.y,en.s)
+
+       
+
+        elseif t[1] == "S" then 
+
+            en.x = t[2]
+            en.y = t[3]
+            en.s = t[1]
+
+
+            messager(event.peer,"en", en.x,en.y,en.s)
+
+        
+
+
+
+        elseif t[1] == "E" then 
+
+            en.x = t[2]
+            en.y = t[3]
+            en.s = t[1]
+
+            messager(event.peer,"en", en.x,en.y,en.s)
+
+      
+
+
+
+        elseif t[1] == "D" then 
+
+            en.x = t[2]
+            en.y = t[3]
+            en.s = t[1]
 
             messager(event.peer,"en", en.x,en.y,en.s)
 
         end
 
 
-        if t[1] == "s" then 
-
-            en.x = t[2]
-            en.y = t[3]
-
-            messager(event.peer,"en", en.x,en.y,en.s)
-
-        end
-
-
-
-        if t[1] == "a" then 
-
-            en.x = t[2]
-            en.y = t[3]
-
-            messager(event.peer,"en", en.x,en.y,en.s)
-
-        end
-
-
-
-        if t[1] == "d" then 
-
-            en.x = t[2]
-            en.y = t[3]
-
-            messager(event.peer,"en", en.x,en.y,en.s)
-
-        end
 
 
     end
@@ -156,4 +189,3 @@ function love.update(dt)
 
 
 end
-
