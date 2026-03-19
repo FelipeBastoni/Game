@@ -4,7 +4,7 @@
 local enet = require("enet")
 
 local host = enet.host_create()
-local server = host:connect("IP do Servidor:6789")
+local server = host:connect("127.0.1.0:6789")
 
 
 
