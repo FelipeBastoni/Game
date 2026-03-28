@@ -14,9 +14,17 @@ local server = host:connect("127.0.0.1:6789")
 
 function messager(sentido, x, y, vida, id)
 
-        local msg = ""..sentido..";"..x..";"..y..";"..vida..";"..id..";"
+    if not peer then
 
-        server:send(msg)
+        return
+
+    end
+
+    local msg = ""..sentido..";"..x..";"..y..";"..vida..";"..id..";"
+
+    peer:send(msg, 0, "unreliable")
+
+    host:flush()
 
 end
 
@@ -171,6 +179,8 @@ function love.update(dt)
 
         if event.type == "connect" then        
             print("Conectado ao servidor!")
+
+            peer = event.peer
 
 
     --Onde a mágica acontece
