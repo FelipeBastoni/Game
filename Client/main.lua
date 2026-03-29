@@ -4,7 +4,7 @@
 local enet = require("enet")
 
 local host = enet.host_create()
-local server = host:connect("127.0.0.1:6789")
+local server = host:connect("192.168.2.115:6789")
 
 
 
@@ -158,14 +158,15 @@ end
 
 local en = false
 local step = 0
+local timer = 0
 local position = ""
 
 function love.update(dt)
 
 
-    local event = host:service(0)
+    local event = host:service(10)
 
-
+    timer = timer + dt
     step = step + dt
 
 
@@ -437,9 +438,11 @@ function love.update(dt)
 
     --Envia posição ao Server
 
-    if step >= 0.041 and id ~= 0 then
+    if timer >= 0.041 and id ~= 0 then
 
         messager(player.position, player.x, player.y, player.speed, id)
+
+        timer = 0
 
     end
 
