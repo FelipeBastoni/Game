@@ -141,7 +141,7 @@ function love.update(dt)
 
     while true do 
 
-        local event = host:service(10)
+        local event = host:service(0)
 
         
         if not event then break end
@@ -197,7 +197,6 @@ function love.update(dt)
      --Se recebeu resposta
             
             elseif event.type == "receive" then
-               -- print(event.data)
             
                 --Extrai os dados
                 t = {}
@@ -216,7 +215,7 @@ function love.update(dt)
         end
 
 
-        if timer >= 0.041 and id ~= 0 then
+        if timer >= 0.042 and id ~= 0 then
 
             messager_all_minus(event.peer, "loadp", t[2], t[3], t[1], id)
 
