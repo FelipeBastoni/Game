@@ -195,89 +195,7 @@ function love.update(dt)
             update(event.data)
 
 
-
-
-        --Quando Resposta:
-
-
-
-
-            if t[1] == "log" then
-
-                en = true
-            
-                id = tonumber(t[5])
-
-                inimigo[id] = {}
-
-                inimigo[id].x = 0
-                inimigo[id].y = 0
-                inimigo[id].speed = 0
-                -- inimigo[id].position = "love.graphics.newImage("nome padronizado..t[4]..".png"")"
-                inimigo[id].sprite = p_default[3]
-                inimigo[id].id = id
-
-                print("novo "..id)
-
-            end
-
-
-            if t[1] == "logp" then
-
-                idp = tonumber(t[5])
-
-                inimigo[idp] = {}
-
-                inimigo[idp].x = 0
-                inimigo[idp].y = 0
-                inimigo[idp].speed = 0
-                inimigo[idp].position = ""
-                inimigo[idp].sprite = p_default[3]
-                inimigo[idp].id = idp
-
-                table.insert(jogadores, idp)
-
-                print("Carregado: "..idp)
-
-
-            end
-
-
-            if t[1] == "newp" then
-
-                idp = tonumber(t[5])
-
-                inimigo[idp] = {}
-
-                inimigo[idp].x = 0
-                inimigo[idp].y = 0
-                inimigo[idp].speed = 0
-                inimigo[idp].position = ""
-                inimigo[idp].sprite = p_default[3]
-                inimigo[idp].id = idp
-
-                table.insert(jogadores, idp)
-
-                print("Carregado: "..idp)
-
-
-            end
-
-
-            if t[1] == "loadp" then
-
-                idp = tonumber(t[5])
-
-                inimigo[idp].x = t[2]
-                inimigo[idp].y = t[3]
-                inimigo[idp].speed = 0
-                inimigo[idp].sprite = p_default[3]
-                inimigo[idp].position = t[4]
-                inimigo[idp].id = idp
-
-            end
-
-
+    
 
 
         elseif event.type == "disconnect" then
@@ -288,6 +206,89 @@ function love.update(dt)
         end
         
     end
+
+
+        
+--Quando Resposta:
+
+
+    if t[1] == "log" then
+
+        en = true
+    
+        id = tonumber(t[5])
+
+        inimigo[id] = {}
+
+        inimigo[id].x = 0
+        inimigo[id].y = 0
+        inimigo[id].speed = 0
+        -- inimigo[id].position = "love.graphics.newImage("nome padronizado..t[4]..".png"")"
+        inimigo[id].sprite = p_default[3]
+        inimigo[id].id = id
+
+        print("novo "..id)
+
+    end
+
+
+    if t[1] == "logp" then
+
+        idp = tonumber(t[5])
+
+        inimigo[idp] = {}
+
+        inimigo[idp].x = 0
+        inimigo[idp].y = 0
+        inimigo[idp].speed = 0
+        inimigo[idp].position = ""
+        inimigo[idp].sprite = p_default[3]
+        inimigo[idp].id = idp
+
+        table.insert(jogadores, idp)
+
+        print("Carregado: "..idp)
+
+
+    end
+
+
+    if t[1] == "newp" then
+
+        idp = tonumber(t[5])
+
+        inimigo[idp] = {}
+
+        inimigo[idp].x = 0
+        inimigo[idp].y = 0
+        inimigo[idp].speed = 0
+        inimigo[idp].position = ""
+        inimigo[idp].sprite = p_default[3]
+        inimigo[idp].id = idp
+
+        table.insert(jogadores, idp)
+
+        print("Carregado: "..idp)
+
+
+    end
+
+
+    if t[1] == "loadp" then
+
+        idp = tonumber(t[5])
+
+        inimigo[idp].x = t[2]
+        inimigo[idp].y = t[3]
+        inimigo[idp].speed = 0
+        inimigo[idp].sprite = p_default[3]
+        inimigo[idp].position = t[4]
+        inimigo[idp].id = idp
+
+    end
+
+
+
 
 
 
