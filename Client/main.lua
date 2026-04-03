@@ -4,7 +4,7 @@
 local enet = require("enet")
 
 local host = enet.host_create()
-local server = host:connect("192.168.2.115:6789")
+local server = host:connect("127.0.0.1:6789")
 
 
 
@@ -120,8 +120,8 @@ function love.load()
     player.position = "D"
     player.sprite = p_default[1]
 
-
-
+    mx = 0
+    my = 0
 
     --inimigo
 
@@ -164,7 +164,7 @@ local position = ""
 function love.update(dt)
 
 
-    local event = host:service(10)
+    local event = host:service(0)
 
     timer = timer + dt
     step = step + dt
@@ -188,7 +188,6 @@ function love.update(dt)
 
         elseif event.type == "receive" then
 
-            print("Servidor respondeu:", event.data)
 
 
             --reseta array
@@ -214,7 +213,7 @@ function love.update(dt)
                 inimigo[id].x = 0
                 inimigo[id].y = 0
                 inimigo[id].speed = 0
-                inimigo[id].position = ""
+                -- inimigo[id].position = "love.graphics.newImage("nome padronizado..t[4]..".png"")"
                 inimigo[id].sprite = p_default[3]
                 inimigo[id].id = id
 
@@ -271,14 +270,10 @@ function love.update(dt)
 
                 inimigo[idp].x = t[2]
                 inimigo[idp].y = t[3]
-                inimigo[idp].speed = t[4]
-                inimigo[idp].position = ""
+                inimigo[idp].speed = 0
                 inimigo[idp].sprite = p_default[3]
+                inimigo[idp].position = t[4]
                 inimigo[idp].id = idp
-
-
-                print("Load: "..idp)
-
 
             end
 
@@ -297,42 +292,35 @@ function love.update(dt)
 
 
 
-
-
  --Posição do Personagem:
 
 
     position = "P"
 
 
-    if player.position == "E" and position == "P" then
+    if player.position == "PE" then
 
         player.sprite = p_default[2]
-        player.position = "PE"
-
 
     end
 
-    if player.position == "D" and position == "P" then
+    if player.position == "PD" then
 
         player.sprite = p_default[1]
-        player.position = "PD"
 
 
     end
 
-    if player.position == "U" and position == "P" then
+    if player.position == "PU" then
 
         player.sprite = p_default[4]
-        player.position = "PU"
 
 
     end
 
-    if player.position == "S" and position == "P" then
+    if player.position == "PS" then
 
         player.sprite = p_default[3]
-        player.position = "PS"
 
     end
 
@@ -342,6 +330,41 @@ function love.update(dt)
 
 
  --Movimentação do Personagem:
+
+    mx = love.mouse.getX()
+    my = love.mouse.getY()
+
+
+
+    if mx > 960 then
+
+        player.position = "PD"
+
+
+    else    
+
+        player.position = "PE"
+
+
+    end
+
+
+    if mx >= 864 and mx <= 1056 and my > 540  then
+
+        player.position = "PS"
+
+    elseif mx >= 864 and mx <= 1056 and my < 540  then
+
+        player.position = "PU"
+
+    end
+
+
+
+
+
+
+-- teclado
 
     if love.keyboard.isDown("w") then
         
@@ -359,7 +382,6 @@ function love.update(dt)
         end
 
         player.position = "U"
-        position = "M"
 
     end
 
@@ -382,7 +404,6 @@ function love.update(dt)
         end
 
         player.position = "S"
-        position = "M"
 
     end
 
@@ -408,7 +429,6 @@ function love.update(dt)
         end
 
         player.position = "E"
-        position = "M"
 
     end
 
@@ -429,16 +449,18 @@ function love.update(dt)
         end
 
         player.position = "D"
-        position = "M"
 
     end
 
 
 
 
+
+
+
     --Envia posição ao Server
 
-    if timer >= 0.041 and id ~= 0 then
+    if timer >= 0.042 and id ~= 0 then
 
         messager(player.position, player.x, player.y, player.speed, id)
 
@@ -452,6 +474,15 @@ end
 
 
 
+function love.mousepressed(x, y, button)
+
+    if button == 1 then
+
+        print("shoots fired "..mx.."; "..my)
+    
+    end
+
+end
 
 
 
@@ -507,7 +538,7 @@ function love.draw()
 
  --Gera Personagem
 
-    love.graphics.draw(player.sprite, player.x, player.y)
+    love.graphics.draw(player.sprite, player.x, player.y, math.rad(0), 1, 1, player.sprite:getWidth()/2, player.sprite:getHeight()/2)
 
 
 
