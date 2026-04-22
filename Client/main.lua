@@ -319,7 +319,7 @@ function love.update(dt)
 
 
 
-        
+
         if t[4] == "E" then
 
             inimigo[idp].sprite = p_left[1]
@@ -518,6 +518,17 @@ function love.update(dt)
     end
 
 
+
+
+    if love.keyboard.isDown("lshift") then
+
+        player.speed = 750
+
+    else 
+
+        player.speed = 450
+
+    end
 
 
 
