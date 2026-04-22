@@ -191,7 +191,6 @@ function love.update(dt)
 
 
             --reseta array
-            t = {}
             update(event.data)
 
 
@@ -228,6 +227,8 @@ function love.update(dt)
         inimigo[id].id = id
 
         print("novo "..id)
+        t = {}
+
 
     end
 
@@ -248,6 +249,7 @@ function love.update(dt)
         table.insert(jogadores, idp)
 
         print("Carregado: "..idp)
+        t = {}
 
 
     end
@@ -269,6 +271,7 @@ function love.update(dt)
         table.insert(jogadores, idp)
 
         print("Carregado: "..idp)
+        t = {}
 
 
     end
@@ -281,9 +284,70 @@ function love.update(dt)
         inimigo[idp].x = t[2]
         inimigo[idp].y = t[3]
         inimigo[idp].speed = 0
-        inimigo[idp].sprite = p_default[3]
+        inimigo[idp].sprite = p_down[1]
         inimigo[idp].position = t[4]
         inimigo[idp].id = idp
+
+        print(t[4])
+
+        if t[4] == "PE" then
+
+            inimigo[idp].sprite = p_default[2]
+
+        end
+
+        if t[4] == "PD" then 
+
+            inimigo[idp].sprite = p_default[1]
+
+        end
+
+
+        if t[4] == "PU" then
+
+            inimigo[idp].sprite = p_default[4]
+
+        end
+
+        if t[4] == "PS" then 
+
+            inimigo[idp].sprite = p_default[3]
+
+        end
+
+
+
+
+
+        
+        if t[4] == "E" then
+
+            inimigo[idp].sprite = p_left[1]
+
+        end
+
+        if t[4] == "D" then
+
+            inimigo[idp].sprite = p_right[1]
+
+        end
+
+        if t[4] == "U" then
+
+            inimigo[idp].sprite = p_up[1]
+
+        end
+
+        if t[4] == "S" then
+
+            inimigo[idp].sprite = p_down[1]
+
+        end
+
+            
+
+
+        t = {}
 
     end
 
