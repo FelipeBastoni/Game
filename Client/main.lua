@@ -145,9 +145,43 @@ function love.load()
 
     love.window.setMode(1920, 1080)
 
+
+    -- Tela inicial
+
+
+    love.window.setMode(1920, 1080)
+    fundo = love.graphics.newImage("AAA.png")
+
+    fonte = love.graphics.newFont(25)
+    love.graphics.setFont(fonte)
+    alfa = 0.5
+    cut_timer = 1
+    runner = false
+
+
+
 end
 
 
+-- chama a tela inicial
+
+function initial()
+
+    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.draw(fundo)
+    text = "PRESSIONE A TECLA ESPAÇO PARA JOGAR"
+    love.graphics.setColor(1, 1, 1, alfa)
+    love.graphics.print(text, (love.graphics.getWidth() - love.graphics.getFont():getWidth(text))/2, (love.graphics.getHeight()/2)+250)
+
+    love.graphics.setColor(1, 1, 1, 1)
+
+end
+
+-- limpa a tela inicial
+
+function start()
+    love.graphics.clear(0, 0, 0)
+end
 
 
 
@@ -162,6 +196,46 @@ local timer = 0
 local position = ""
 
 function love.update(dt)
+
+    -- animação tela inicial
+
+    if runner == false then
+        if alfa < 1 and cut_timer == 1 then
+            alfa = alfa + (dt/4)
+        end
+        if alfa >= 1 then 
+            cut_timer = 2
+        end
+        if cut_timer == 2 then
+            alfa = alfa - (dt/4)
+        end
+        if alfa <= 0.5 then
+            cut_timer = 1
+        end
+        if love.keyboard.isDown("space") then
+            alfa = 0
+            runner = true
+        end
+    end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     local event = host:service(0)
@@ -567,61 +641,89 @@ end
 function love.draw()
 
 
- --Tamanho da tela
-
-    local screenWidth = love.graphics.getWidth()
-    local screenHeight = love.graphics.getHeight()
-
-
- --Camera
-
-    love.graphics.push()
-    love.graphics.translate(
-
-        -player.x + screenWidth/ 2,
-        -player.y + screenHeight / 2
-
-    )
 
 
 
+    -- lógica de exibição tela inicial ---> jogo
 
- --Gerador de Cenário
+    if runner == false then
 
-    for x = 0, 1910, 191 do
+        initial()
 
-        for y = 0, 1146, 191 do 
-        
-            love.graphics.draw(grama, x, y)
+    end
+
+    if runner == true then
+
+        start()
+
+        runner = 7
+
+    end
+
+
+    if runner == 7 then
+
+
+    --Tamanho da tela
+
+        local screenWidth = love.graphics.getWidth()
+        local screenHeight = love.graphics.getHeight()
+
+
+    --Camera
+
+        love.graphics.push()
+        love.graphics.translate(
+
+            -player.x + screenWidth/ 2,
+            -player.y + screenHeight / 2
+
+        )
+
+
+    --Gerador de Cenário
+
+        for x = 0, 1910, 191 do
+
+            for y = 0, 1146, 191 do 
+            
+                love.graphics.draw(grama, x, y)
+
+            end
 
         end
 
+
+
+
+        for n=1, #jogadores, 1 do
+
+            infa = jogadores[n]
+
+            love.graphics.draw(inimigo[infa].sprite, inimigo[infa].x, inimigo[infa].y)
+
+
+        end
+
+
+
+    --Gera Personagem
+
+        love.graphics.draw(player.sprite, player.x, player.y, math.rad(0), 1, 1, player.sprite:getWidth()/2, player.sprite:getHeight()/2)
+
+
+
+
+    --Executa
+
+        love.graphics.pop()
+
+
+
+
+
     end
 
-
-
-
-    for n=1, #jogadores, 1 do
-
-        infa = jogadores[n]
-
-        love.graphics.draw(inimigo[infa].sprite, inimigo[infa].x, inimigo[infa].y)
-
-
-    end
-
-
-
- --Gera Personagem
-
-    love.graphics.draw(player.sprite, player.x, player.y, math.rad(0), 1, 1, player.sprite:getWidth()/2, player.sprite:getHeight()/2)
-
-
-
-
- --Executa
-
-    love.graphics.pop()
 
 
 end
