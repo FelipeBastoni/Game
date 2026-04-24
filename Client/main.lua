@@ -15,15 +15,12 @@ local server = host:connect("127.0.0.1:6789")
 function messager(sentido, x, y, vida, id)
 
     if not peer then
-
         return
-
     end
 
     local msg = ""..sentido..";"..x..";"..y..";"..vida..";"..id..";"
 
     peer:send(msg, 0, "unreliable")
-
     host:flush()
 
 end
@@ -35,14 +32,11 @@ end
 
 --Captador de resposta
 
-local t = {}
 function update(xt)
-
     
     for item in string.gmatch(xt, "([^;]+)") do
         table.insert(t, item)
     end
-
 
 end
 
@@ -53,11 +47,9 @@ end
 
 function love.load()
 
-
  --sprites:
 
-
-    --player
+  --player
 
     p_default = {
         love.graphics.newImage("primeofc.png"), 
@@ -86,21 +78,15 @@ function love.load()
 
     }
 
-
     p_down = {
 
         love.graphics.newImage("primedownstep1.png"), 
         love.graphics.newImage("primedownstep2.png"), 
 
-
     }
 
 
-
-
-
-
-    --cenário
+  --Cenário
 
     grama = love.graphics.newImage("grama.png")
 
@@ -109,9 +95,51 @@ function love.load()
 
 
 
+
+
+
+ --Operadores
+
+  --Array de dados recebidos do Servidor
+    t = {}
+
+  --Status de spawn
+    en = false
+
+  --Time step das animações
+    step = 0
+
+  --Time step do envio de pacotes
+    timer = 0
+
+  --Posição do personagem
+    position = ""
+
+  --Posição do mouse
+    mx = 0
+    my = 0
+
+  --Definidor de ID das conexões/clientes
+    id = 0 
+
+  --Array das conexões/clientes
+    jogadores = {}
+
+ --Executor do jogo
+    runner = false
+
+ --Alfa da animação da tela inicial
+    alfa = 0.5
+    
+ --Timer da animação da Tela inicial
+    cut_timer = 1
+    
+
+
+
  --objetos
 
-    --player
+  --player
 
     player = {}
     player.x = 300
@@ -120,53 +148,46 @@ function love.load()
     player.position = "D"
     player.sprite = p_default[1]
 
-    mx = 0
-    my = 0
 
-    --inimigo
 
-    id = 0
+  --Party (outros jogadores)
 
-    inimigo = {}
-
-    inimigo[id] = {}
-    inimigo[id].x = 200
-    inimigo[id].y = 200
-    inimigo[id].speed = 450
-    inimigo[id].position = ""
-    inimigo[id].sprite = p_default[3]
-    inimigo[id].id = id
-
-    jogadores = {}
+    party = {}
+    party[id] = {}
+    party[id].x = 200
+    party[id].y = 200
+    party[id].speed = 450
+    party[id].position = ""
+    party[id].sprite = p_default[3]
+    party[id].id = id
 
 
 
-    --configuração da janela
 
+ --Configuração da janela
+
+
+   --Resolução/tamanho da tela
     love.window.setMode(1920, 1080)
-
-
-    -- Tela inicial
-
-
-    love.window.setMode(1920, 1080)
-    fundo = love.graphics.newImage("AAA.png")
-
-    fonte = love.graphics.newFont(25)
-    love.graphics.setFont(fonte)
-    alfa = 0.5
-    cut_timer = 1
-    runner = false
-
 
 
 end
 
 
--- chama a tela inicial
+
+
+--Chama a tela inicial
 
 function initial()
 
+  --Define o fundo
+    fundo = love.graphics.newImage("AAA.png")
+    
+  --Define a fonte
+    fonte = love.graphics.newFont(25)
+    love.graphics.setFont(fonte)
+    
+  --Printa o fundo
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.draw(fundo)
     text = "PRESSIONE A TECLA ESPAÇO PARA JOGAR"
@@ -177,7 +198,9 @@ function initial()
 
 end
 
--- limpa a tela inicial
+
+
+--Limpa a tela inicial
 
 function start()
     love.graphics.clear(0, 0, 0)
@@ -186,18 +209,14 @@ end
 
 
 
+
+
+
 --Processos por frame
-
---Operadores
-
-local en = false
-local step = 0
-local timer = 0
-local position = ""
 
 function love.update(dt)
 
-    -- animação tela inicial
+  --Animação tela inicial
 
     if runner == false then
         if alfa < 1 and cut_timer == 1 then
@@ -222,21 +241,7 @@ function love.update(dt)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  --Resgatando evento e atualizando variaveis de fluxo
 
     local event = host:service(0)
 
@@ -264,7 +269,7 @@ function love.update(dt)
 
 
 
-            --reseta array
+            --forma o array com dados recebidos
             update(event.data)
 
 
@@ -272,12 +277,10 @@ function love.update(dt)
 
 
         elseif event.type == "disconnect" then
-    
             print("Desconectado")
-        
-
         end
         
+
     end
 
 
@@ -285,20 +288,20 @@ function love.update(dt)
 --Quando Resposta:
 
 
+  --Trata primeira conexão
+
     if t[1] == "log" then
 
         en = true
-    
         id = tonumber(t[5])
 
-        inimigo[id] = {}
-
-        inimigo[id].x = 0
-        inimigo[id].y = 0
-        inimigo[id].speed = 0
-        -- inimigo[id].position = "love.graphics.newImage("nome padronizado..t[4]..".png"")"
-        inimigo[id].sprite = p_default[3]
-        inimigo[id].id = id
+        party[id] = {}
+        party[id].x = 0
+        party[id].y = 0
+        party[id].speed = 0
+        -- party[id].position = "love.graphics.newImage("nome padronizado..t[4]..".png"")"
+        party[id].sprite = p_default[3]
+        party[id].id = id
 
         print("novo "..id)
         t = {}
@@ -307,18 +310,19 @@ function love.update(dt)
     end
 
 
+  --Trata carregamento de jogadores
+
     if t[1] == "logp" then
 
         idp = tonumber(t[5])
 
-        inimigo[idp] = {}
-
-        inimigo[idp].x = 0
-        inimigo[idp].y = 0
-        inimigo[idp].speed = 0
-        inimigo[idp].position = ""
-        inimigo[idp].sprite = p_default[3]
-        inimigo[idp].id = idp
+        party[idp] = {}
+        party[idp].x = 0
+        party[idp].y = 0
+        party[idp].speed = 0
+        party[idp].position = ""
+        party[idp].sprite = p_default[3]
+        party[idp].id = idp
 
         table.insert(jogadores, idp)
 
@@ -328,19 +332,20 @@ function love.update(dt)
 
     end
 
+
+  --Trata inclusão de jogador
 
     if t[1] == "newp" then
 
         idp = tonumber(t[5])
 
-        inimigo[idp] = {}
-
-        inimigo[idp].x = 0
-        inimigo[idp].y = 0
-        inimigo[idp].speed = 0
-        inimigo[idp].position = ""
-        inimigo[idp].sprite = p_default[3]
-        inimigo[idp].id = idp
+        party[idp] = {}
+        party[idp].x = 0
+        party[idp].y = 0
+        party[idp].speed = 0
+        party[idp].position = ""
+        party[idp].sprite = p_default[3]
+        party[idp].id = idp
 
         table.insert(jogadores, idp)
 
@@ -351,77 +356,66 @@ function love.update(dt)
     end
 
 
+  --Trata atualização de jogador
+
     if t[1] == "loadp" then
 
         idp = tonumber(t[5])
 
-        inimigo[idp].x = t[2]
-        inimigo[idp].y = t[3]
-        inimigo[idp].speed = 0
-        inimigo[idp].sprite = p_down[1]
-        inimigo[idp].position = t[4]
-        inimigo[idp].id = idp
+        party[idp].x = t[2]
+        party[idp].y = t[3]
+        party[idp].speed = 0
+        party[idp].sprite = p_down[1]
+        party[idp].position = t[4]
+        party[idp].id = idp
 
         print(t[4])
 
+
+      --Define sprite quando parado
+
         if t[4] == "PE" then
-
-            inimigo[idp].sprite = p_default[2]
-
+            party[idp].sprite = p_default[2]
         end
 
         if t[4] == "PD" then 
-
-            inimigo[idp].sprite = p_default[1]
-
+            party[idp].sprite = p_default[1]
         end
 
 
         if t[4] == "PU" then
-
-            inimigo[idp].sprite = p_default[4]
-
+            party[idp].sprite = p_default[4]
         end
 
         if t[4] == "PS" then 
-
-            inimigo[idp].sprite = p_default[3]
-
+            party[idp].sprite = p_default[3]
         end
 
 
 
 
-
+      --Define sprite quando andando
 
         if t[4] == "E" then
-
-            inimigo[idp].sprite = p_left[1]
-
+            party[idp].sprite = p_left[1]
         end
 
         if t[4] == "D" then
-
-            inimigo[idp].sprite = p_right[1]
-
+            party[idp].sprite = p_right[1]
         end
 
         if t[4] == "U" then
-
-            inimigo[idp].sprite = p_up[1]
-
+            party[idp].sprite = p_up[1]
         end
 
         if t[4] == "S" then
-
-            inimigo[idp].sprite = p_down[1]
-
+            party[idp].sprite = p_down[1]
         end
 
-            
-
-
+    
+      --Resseta o Array de dados recebidos
         t = {}
+
 
     end
 
@@ -436,66 +430,48 @@ function love.update(dt)
 
     position = "P"
 
+  --Define sprite quando parado do cliente da conexão
 
     if player.position == "PE" then
-
         player.sprite = p_default[2]
-
     end
 
     if player.position == "PD" then
-
         player.sprite = p_default[1]
-
-
     end
 
     if player.position == "PU" then
-
         player.sprite = p_default[4]
-
-
     end
 
     if player.position == "PS" then
-
         player.sprite = p_default[3]
-
     end
-
-
 
 
 
 
  --Movimentação do Personagem:
 
+
+  --Define Sprite por posição do mouse
+
+
     mx = love.mouse.getX()
     my = love.mouse.getY()
 
 
-
     if mx > 960 then
-
         player.position = "PD"
-
-
     else    
-
         player.position = "PE"
-
-
     end
 
 
     if mx >= 864 and mx <= 1056 and my > 540  then
-
         player.position = "PS"
-
     elseif mx >= 864 and mx <= 1056 and my < 540  then
-
         player.position = "PU"
-
     end
 
 
@@ -503,10 +479,11 @@ function love.update(dt)
 
 
 
--- teclado
+ --Teclado
 
-    if love.keyboard.isDown("w") then
-        
+  --Calcula posição do jogador de acordo com comando
+
+    if love.keyboard.isDown("w") then        
         player.y = player.y - player.speed * dt
         player.sprite = p_up[1]
 
@@ -524,12 +501,7 @@ function love.update(dt)
 
     end
 
-
-
-
-
     if love.keyboard.isDown("s") then
-    
         player.y = player.y + player.speed * dt
         player.sprite = p_down[1]
 
@@ -546,15 +518,7 @@ function love.update(dt)
 
     end
 
-
-
-
-
-
-
-
     if love.keyboard.isDown("a") then
-
         player.x = player.x - player.speed * dt
         player.sprite = p_left[1]
 
@@ -570,9 +534,6 @@ function love.update(dt)
         player.position = "E"
 
     end
-
-
-
 
     if love.keyboard.isDown("d") then
         player.x = player.x + player.speed * dt
@@ -592,74 +553,51 @@ function love.update(dt)
     end
 
 
-
+  --Correr com Shift
 
     if love.keyboard.isDown("lshift") then
-
         player.speed = 750
-
     else 
-
         player.speed = 450
-
     end
 
 
 
 
+ --Envia Dados do jogador ao Server
 
-    --Envia posição ao Server
-
+                --Limita a cerca de 24+ envios por segundo
     if timer >= 0.042 and id ~= 0 then
-
         messager(player.position, player.x, player.y, player.speed, id)
-
         timer = 0
-
     end
-
 
 
 end
 
 
 
-function love.mousepressed(x, y, button)
-
-    if button == 1 then
-
-        print("shoots fired "..mx.."; "..my)
-    
-    end
-
-end
 
 
-
---Joga na Tela:
+--Desenha na Tela:
 
 function love.draw()
 
 
-
-
-
-    -- lógica de exibição tela inicial ---> jogo
+  --Lógica de exibição tela inicial ---> jogo
 
     if runner == false then
-
         initial()
-
     end
 
     if runner == true then
-
         start()
-
         runner = 7
-
     end
 
+
+
+  --Jogo rodando
 
     if runner == 7 then
 
@@ -684,25 +622,17 @@ function love.draw()
     --Gerador de Cenário
 
         for x = 0, 1910, 191 do
-
             for y = 0, 1146, 191 do 
-            
                 love.graphics.draw(grama, x, y)
-
             end
-
         end
 
 
-
+    -- Array da party
 
         for n=1, #jogadores, 1 do
-
             infa = jogadores[n]
-
-            love.graphics.draw(inimigo[infa].sprite, inimigo[infa].x, inimigo[infa].y)
-
-
+            love.graphics.draw(party[infa].sprite, party[infa].x, party[infa].y)
         end
 
 
@@ -713,12 +643,9 @@ function love.draw()
 
 
 
-
     --Executa
 
         love.graphics.pop()
-
-
 
 
 
