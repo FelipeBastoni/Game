@@ -1,44 +1,32 @@
 
 local enet = require("enet")
-
 --Cria Servidor
 local host = enet.host_create("*:6789")
-
-
-
 
 
 
 --Messager (envios de dados Servidor --> Cliente)
 
 function messager(peer, sentido, x, y, speed, id)
-
     local msg = ""..sentido..";"..x..";"..y..";"..speed..";"..id..";"
 
     peer:send(msg, 0, "unreliable")
-
     host:flush()
-
 
 end
 
 
 
-
--- Envio de dados Servidor --> Clientes
+-- Envio de dados Servidor --> Clientes (Do que é gerado no servidor)
 
 function messager_all(sentido, x, y, speed, id)
-
     local msg = ""..sentido..";"..x..";"..y..";"..speed..";"..id..";"
 
     for n=1, np, 1 do
-
         peer = ids[n]
 
         peer:send(msg, 0, "unreliable")
-        
         host:flush()
-
 
     end
     
@@ -46,25 +34,18 @@ end
 
 
 
-
 -- Envio de dados Cliente --> Servidor --> Clientes
 
 function messager_all_minus(fonte, sentido, x, y, speed, id)
-
     local msg = ""..sentido..";"..x..";"..y..";"..speed..";"..id..";"
 
-
     for n=1, np, 1 do
-
         peer = ids[n]
 
         if peer ~= fonte then 
 
-
             peer:send(msg, 0, "unreliable")
-
             host:flush()
-
 
         end
 
@@ -74,65 +55,47 @@ end
 
 
 
-
-
-
-
 --Captador de resposta
 
-local t = {}
 function update(xt)
-
-
     for item in string.gmatch(xt, "([^;]+)") do
         table.insert(t, item)
     end
-
-
 end
 
 
 
 
 
-
---Objetos 
 
 function love.load()
 
+ --Operadores
+
+  --Contabilizador de conexões
     np = 0
 
-    en = {}
-    en.x = 0
-    en.y = 0
-    en.s = 0
-    en.id = 0
-
-
+  --Definidor de ID
     id = 0
 
+  --Array dos ID's
     ids = {}
 
-    en[np] = {}
-    en[np].x = 0
-    en[np].y = 0
-    en[np].s = 0
+  --Timer para envio de pacotes
+    timer = 0
+
+  --Array de dados recebidos
+    t = {}
 
 
 end
-
-
 
 
 
 
 --Processos por Frame
 
---Operadores
-
-local timer = 0
 function love.update(dt)
-
 
     timer = timer + dt
 
@@ -142,8 +105,6 @@ function love.update(dt)
     while true do 
 
         local event = host:service(0)
-
-        
         if not event then break end
 
 
@@ -151,45 +112,28 @@ function love.update(dt)
 
         if event then
 
-            --checa conexão
+          --Checa conexão
 
             if event.type == "connect" then
                     
                 print("conectado", event.peer)
 
-            --incrementa id
 
+            --Atualiza número de Conexões
                 np = np + 1
 
-            --notifica cliente
+            --Notifica peer para criar jogador (seu próprio)
                 messager(event.peer, "log", 0, 0, 0, np)                
 
-
-
-            --inclui objeto no servidor
-
-                en[np] = {}
-
-                en[np].x = 0
-                en[np].y = 0
-                en[np].s = 0
-                en[np].id = np
-
-
-            --inclui ip na lista
-
+            --Inclui IP na lista
                 table.insert(ids, event.peer)
         
-
+            --Notifica ao peer todos os jogadores que ele precisa criar (outros jogadores)
                 for n=1, (np-1), 1 do
-
                     messager(event.peer, "logp", 0, 0, 0, n)
-                
                 end
                 
-
-
-            -- novo jogador
+            --Notifica aos clientes já logados que precisa criar novo jogador (nova conexão)
 
                 messager_all_minus(event.peer, "newp", 0, 0, 0, np)
             
@@ -198,138 +142,36 @@ function love.update(dt)
             
             elseif event.type == "receive" then
             
-                --Extrai os dados
+              --Resseta Array de dados recebidos
                 t = {}
+
+              --Extrai os dados
                 update(event.data)
 
+              --Pega o ID da conexão
                 id = tonumber(t[5])
-
-
 
             end
 
+
         elseif event.type == "disconnect" then
-
             print(event.peer.." caiu mermão")
-
         end
 
 
+     --Envia Dados do jogador ao Server
+
+                    --Limita a cerca de 24+ envios por segundo
         if timer >= 0.042 and id ~= 0 then
 
             messager_all_minus(event.peer, "loadp", t[2], t[3], t[1], id)
-
             timer = 0
 
         end
 
 
-
-
-     --Calcula as Movimentações
-
-        --define movimento
-            
-        --com id
-
-
-        if t[1] == "U" then 
-
-            en[id].x = t[2]
-            en[id].y = t[3]
-            en[id].s = t[1]
-
-
-       
-
-        elseif t[1] == "S" then 
-
-            en[id].x = t[2]
-            en[id].y = t[3]
-            en[id].s = t[1]
-
-
-
-
         
-
-
-
-        elseif t[1] == "E" then 
-
-            en[id].x = t[2]
-            en[id].y = t[3]
-            en[id].s = t[1]
-
-
-
-      
-
-
-
-        elseif t[1] == "D" then 
-
-            en[id].x = t[2]
-            en[id].y = t[3]
-            en[id].s = t[1]
-
-
-
-
-
-
-
-        elseif t[1] == "PU" then 
-
-            en[id].x = t[2]
-            en[id].y = t[3]
-            en[id].s = t[1]
-
-
-
-
-
-
-
-        elseif t[1] == "PS" then 
-
-            en[id].x = t[2]
-            en[id].y = t[3]
-            en[id].s = t[1]
-
-
-
-
-
-
-
-        elseif t[1] == "PE" then 
-
-            en[id].x = t[2]
-            en[id].y = t[3]
-            en[id].s = t[1]
-
-
-
-
-
-
-
-        elseif t[1] == "PD" then 
-
-            en[id].x = t[2]
-            en[id].y = t[3]
-            en[id].s = t[1]
-
-
-
-
-        end
-
-
     end
-
-
 
 
 end
