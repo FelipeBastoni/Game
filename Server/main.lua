@@ -5,7 +5,7 @@ local host = enet.host_create("*:6789")
 
 
 
---Messager (envios de dados Servidor --> Cliente)
+--Messager envios de dados (Servidor --> Peer)
 
 function messager(peer, sentido, x, y, speed, id)
     local msg = ""..sentido..";"..x..";"..y..";"..speed..";"..id..";"
@@ -17,7 +17,7 @@ end
 
 
 
--- Envio de dados Servidor --> Clientes (Do que é gerado no servidor)
+-- Envio de dados (Servidor --> Clientes) *(Do que é gerado no servidor)
 
 function messager_all(sentido, x, y, speed, id)
     local msg = ""..sentido..";"..x..";"..y..";"..speed..";"..id..";"
@@ -34,7 +34,7 @@ end
 
 
 
--- Envio de dados Cliente --> Servidor --> Clientes
+-- Envio de dados (Peer --> Servidor --> Clientes)
 
 function messager_all_minus(fonte, sentido, x, y, speed, id)
     local msg = ""..sentido..";"..x..";"..y..";"..speed..";"..id..";"
