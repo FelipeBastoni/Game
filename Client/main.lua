@@ -122,8 +122,15 @@ function love.load()
   --Definidor de ID das conexões/clientes
     id = 0 
 
+  --Definidor de ID dos Inimigos
+    idi = 0
+
   --Array das conexões/clientes
     jogadores = {}
+
+  --Array dos inimigos
+    inimigos = {}
+
 
  --Executor do jogo
     runner = false
@@ -161,6 +168,18 @@ function love.load()
     party[id].sprite = p_default[3]
     party[id].id = id
 
+  
+
+  --Inimigos
+
+    inimigo = {}
+    inimigo[idi] = {}
+    inimigo[idi].x = 200
+    inimigo[idi].y = 200
+    inimigo[idi].speed = 450
+    inimigo[idi].position = ""
+    inimigo[idi].sprite = p_default[3]
+    inimigo[idi].id = idi
 
 
 
@@ -287,7 +306,6 @@ function love.update(dt)
         
 --Quando Resposta:
 
-
   --Trata primeira conexão
 
     if t[1] == "log" then
@@ -356,12 +374,36 @@ function love.update(dt)
     end
 
 
+  --Trata inclusão de inimigos
+
+    if t[1] == "newi" then
+
+        idip = tonumber(t[5])
+
+        inimigo[idip] = {}
+        inimigo[idip].x = t[2]
+        inimigo[idip].y = 0
+        inimigo[idip].speed = 0
+        inimigo[idip].position = ""
+        inimigo[idip].sprite = p_default[3]
+        inimigo[idip].id = idip
+
+        table.insert(inimigos, idip)
+
+        print("Gerado: "..idip)
+        t = {}
+
+
+    end
+
+
   --Trata atualização de jogador
 
     if t[1] == "loadp" then
 
         idp = tonumber(t[5])
 
+        party[idp].x = t[2]
         party[idp].x = t[2]
         party[idp].y = t[3]
         party[idp].speed = 0
@@ -370,8 +412,9 @@ function love.update(dt)
         party[idp].id = idp
 
         print(t[4])
+        t = {}
 
-
+    
       --Define sprite quando parado
 
         if t[4] == "PE" then
@@ -420,7 +463,23 @@ function love.update(dt)
     end
 
 
+  --Trata atualização de inimigo
 
+    if t[1] == "loadi" then
+
+        idip = tonumber(t[5])
+
+        inimigo[idip].x = t[2]
+        inimigo[idip].y = 0
+        inimigo[idip].speed = 0
+        inimigo[idip].position = ""
+        inimigo[idip].sprite = p_default[3]
+        inimigo[idip].id = idip
+
+        print(t[2])
+        t = {}
+
+    end
 
 
 
@@ -636,7 +695,18 @@ function love.draw()
         end
 
 
+    --Array dos inimigos
+    
+    if #inimigos > 0 then
 
+        for n=1, #inimigos, 1 do
+            infa = inimigos[n]
+            love.graphics.draw(inimigo[infa].sprite, inimigo[infa].x, inimigo[infa].y)
+        end
+
+    end
+
+    
     --Gera Personagem
 
         love.graphics.draw(player.sprite, player.x, player.y, math.rad(0), 1, 1, player.sprite:getWidth()/2, player.sprite:getHeight()/2)
