@@ -84,8 +84,22 @@ function love.load()
   --Timer para envio de pacotes
     timer = 0
 
+  --Timer para envio de pacotes dos inimigos
+    timer_i = 0
+
   --Array de dados recebidos
     t = {}
+
+  --Array dos inimigos
+    inimigo = {}
+
+  --Indexador dos inimigos
+    i = 0
+    x = 0
+    y = 0
+
+  --Time step para uso do servidor
+    ruler = 0
 
 
 end
@@ -98,7 +112,8 @@ end
 function love.update(dt)
 
     timer = timer + dt
-
+    ruler = ruler + dt
+    timer_i = timer_i + dt
 
  --Roda mais de uma requisição por Frame
 
@@ -167,10 +182,69 @@ function love.update(dt)
             messager_all_minus(event.peer, "loadp", t[2], t[3], t[1], id)
             timer = 0
 
+            print("mandei")
+
         end
 
 
         
+    end
+
+
+
+--Spawn 
+
+ 
+    
+    if love.keyboard.isDown("n") and ruler >= 0.75 then
+
+        i = i + 1
+        x = x + 50
+        y = y + 10 
+
+
+
+
+    --Cria Inimigos
+
+        inimigo[i] = {}
+        inimigo[i].x = x
+        inimigo[i].y = y
+        inimigo[i].position = ""
+        inimigo[i].tipo = ""
+        inimigo[i].vida = 0
+
+        print("Criado" ..i)
+
+        messager_all("newi", x, y, 0, i)
+
+        ruler = 0
+
+
+    end
+
+
+    
+  --Envia dados dos inimigos
+
+   --Se tem inimigo
+    if i > 0 then
+
+        if timer_i >= 0.042 then
+
+            for v=1, i, 1 do
+                --Desloca o inimigo
+                inimigo[v].x = inimigo[v].x + 10
+
+                messager_all("loadi", inimigo[v].x, inimigo[v].y, 0, v)
+                print(v.." no x: "..inimigo[v].x)
+
+                timer_i = 0
+
+            end
+
+        end
+
     end
 
 
