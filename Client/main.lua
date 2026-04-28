@@ -7,44 +7,6 @@ local host = enet.host_create()
 local server = host:connect("127.0.0.1:6789")
 
 
-
-
-
---Messager (envio de dados (cliente --> Servidor))
-
-function messager(sentido, x, y, vida, id)
-
-    if not peer then
-        return
-    end
-
-    local msg = ""..sentido..";"..x..";"..y..";"..vida..";"..id..";"
-
-    peer:send(msg, 0, "unreliable")
-    host:flush()
-
-end
-
-
-
-
-
-
---Captador de resposta
-
-function update(xt)
-    
-    for item in string.gmatch(xt, "([^;]+)") do
-        table.insert(t, item)
-    end
-
-end
-
-
-
-
-
-
 function love.load()
 
  --sprites:
@@ -92,16 +54,10 @@ function love.load()
 
 
 
-
-
-
-
-
-
  --Operadores
 
   --Array de dados recebidos do Servidor
-    t = {}
+    --t = {}
 
   --Status de spawn
     en = false
@@ -131,7 +87,6 @@ function love.load()
   --Array dos inimigos
     inimigos = {}
 
-
  --Executor do jogo
     runner = false
 
@@ -156,7 +111,6 @@ function love.load()
     player.sprite = p_default[1]
 
 
-
   --Party (outros jogadores)
 
     party = {}
@@ -167,7 +121,6 @@ function love.load()
     party[id].position = ""
     party[id].sprite = p_default[3]
     party[id].id = id
-
   
 
   --Inimigos
@@ -185,44 +138,9 @@ function love.load()
 
  --Configuração da janela
 
-
    --Resolução/tamanho da tela
     love.window.setMode(1920, 1080)
 
-
-end
-
-
-
-
---Chama a tela inicial
-
-function initial()
-
-  --Define o fundo
-    fundo = love.graphics.newImage("AAA.png")
-    
-  --Define a fonte
-    fonte = love.graphics.newFont(25)
-    love.graphics.setFont(fonte)
-    
-  --Printa o fundo
-    love.graphics.setColor(1, 1, 1, 1)
-    love.graphics.draw(fundo)
-    text = "PRESSIONE A TECLA ESPAÇO PARA JOGAR"
-    love.graphics.setColor(1, 1, 1, alfa)
-    love.graphics.print(text, (love.graphics.getWidth() - love.graphics.getFont():getWidth(text))/2, (love.graphics.getHeight()/2)+250)
-
-    love.graphics.setColor(1, 1, 1, 1)
-
-end
-
-
-
---Limpa a tela inicial
-
-function start()
-    love.graphics.clear(0, 0, 0)
 end
 
 
@@ -231,82 +149,55 @@ end
 
 
 
---Processos por frame
 
-function love.update(dt)
 
-  --Animação tela inicial
 
-    if runner == false then
-        if alfa < 1 and cut_timer == 1 then
-            alfa = alfa + (dt/4)
-        end
-        if alfa >= 1 then 
-            cut_timer = 2
-        end
-        if cut_timer == 2 then
-            alfa = alfa - (dt/4)
-        end
-        if alfa <= 0.5 then
-            cut_timer = 1
-        end
-        if love.keyboard.isDown("space") then
-            alfa = 0
-            runner = true
-        end
+
+
+
+
+
+--Messager (envio de dados (cliente --> Servidor))
+
+function messager(sentido, x, y, vida, id)
+
+    if not peer then
+        return
     end
 
+    local msg = ""..sentido..";"..x..";"..y..";"..vida..";"..id..";"
+
+    peer:send(msg, 0, "unreliable")
+    host:flush()
+
+end
 
 
 
 
-  --Resgatando evento e atualizando variaveis de fluxo
 
-    local event = host:service(0)
+--Captador de resposta
 
-    timer = timer + dt
-    step = step + dt
+function update(xt)
+    for packet in string.gmatch(xt, "[^%c]+") do
+        t = {}
 
-
-
---Quando temos resposta do servidor
-
-    if event then
-
-
-    --checa conexão
-
-        if event.type == "connect" then        
-            print("Conectado ao servidor!")
-
-            peer = event.peer
-
-
-    --Onde a mágica acontece
-
-        elseif event.type == "receive" then
-
-
-
-            --forma o array com dados recebidos
-            update(event.data)
-
-
-    
-
-
-        elseif event.type == "disconnect" then
-            print("Desconectado")
+        for item in string.gmatch(packet, "([^;]+)") do
+            table.insert(t, item)
         end
-        
 
+        processPacket(t)
     end
+end
 
 
-        
+function processPacket(t)
+
 --Quando Resposta:
 
   --Trata primeira conexão
+
+    if not t[1] then return end
 
     if t[1] == "log" then
 
@@ -322,7 +213,6 @@ function love.update(dt)
         party[id].id = id
 
         print("novo "..id)
-        t = {}
 
 
     end
@@ -345,7 +235,6 @@ function love.update(dt)
         table.insert(jogadores, idp)
 
         print("Carregado: "..idp)
-        t = {}
 
 
     end
@@ -368,7 +257,6 @@ function love.update(dt)
         table.insert(jogadores, idp)
 
         print("Carregado: "..idp)
-        t = {}
 
 
     end
@@ -391,7 +279,6 @@ function love.update(dt)
         table.insert(inimigos, idip)
 
         print("Gerado: "..idip)
-        t = {}
 
 
     end
@@ -404,15 +291,12 @@ function love.update(dt)
         idp = tonumber(t[5])
 
         party[idp].x = t[2]
-        party[idp].x = t[2]
         party[idp].y = t[3]
         party[idp].speed = 0
         party[idp].sprite = p_down[1]
         party[idp].position = t[4]
         party[idp].id = idp
 
-        print(t[4])
-        t = {}
 
     
       --Define sprite quando parado
@@ -456,8 +340,6 @@ function love.update(dt)
         end
 
     
-      --Resseta o Array de dados recebidos
-        t = {}
 
 
     end
@@ -469,6 +351,18 @@ function love.update(dt)
 
         idip = tonumber(t[5])
 
+        if not inimigo[idip] then
+            inimigo[idip] = {
+                x = 0,
+                y = 0,
+                speed = 0,
+                position = "",
+                sprite = p_default[3],
+                id = idip
+            }
+
+        end
+
         inimigo[idip].x = t[2]
         inimigo[idip].y = 0
         inimigo[idip].speed = 0
@@ -476,11 +370,108 @@ function love.update(dt)
         inimigo[idip].sprite = p_default[3]
         inimigo[idip].id = idip
 
-        print(t[2])
-        t = {}
 
     end
 
+end
+
+
+
+
+
+
+
+
+
+
+function conn()
+
+
+    while true do
+        
+        local event = host:service(0)
+
+        if not event then break end
+
+
+     --Quando temos resposta do servidor
+
+        if event then
+
+
+         --checa conexão
+
+            if event.type == "connect" then        
+                print("Conectado ao servidor!")
+
+                peer = event.peer
+
+
+            elseif event.type == "receive" then
+
+                --forma o array com dados recebidos
+                update(event.data)
+
+
+            elseif event.type == "disconnect" then
+                print("Desconectado")
+            end
+
+
+        end
+
+    end
+
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--Processos por frame
+
+function love.update(dt)
+    
+    conn()
+
+    timer = timer + dt
+    step = step + dt
+
+
+  --Animação tela inicial
+
+    if runner == false then
+        if alfa < 1 and cut_timer == 1 then
+            alfa = alfa + (dt/4)
+        end
+        if alfa >= 1 then 
+            cut_timer = 2
+        end
+        if cut_timer == 2 then
+            alfa = alfa - (dt/4)
+        end
+        if alfa <= 0.5 then
+            cut_timer = 1
+        end
+        if love.keyboard.isDown("space") then
+            alfa = 0
+            runner = true
+        end
+    end
+
+
+
+
+        
 
 
 
@@ -635,6 +626,61 @@ function love.update(dt)
 end
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--Chama a tela inicial
+
+function initial()
+
+  --Define o fundo
+    fundo = love.graphics.newImage("AAA.png")
+    
+  --Define a fonte
+    fonte = love.graphics.newFont(25)
+    love.graphics.setFont(fonte)
+    
+  --Printa o fundo
+    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.draw(fundo)
+    text = "PRESSIONE A TECLA ESPAÇO PARA JOGAR"
+    love.graphics.setColor(1, 1, 1, alfa)
+    love.graphics.print(text, (love.graphics.getWidth() - love.graphics.getFont():getWidth(text))/2, (love.graphics.getHeight()/2)+250)
+
+    love.graphics.setColor(1, 1, 1, 1)
+
+end
+
+
+
+--Limpa a tela inicial
+
+function start()
+    love.graphics.clear(0, 0, 0)
+end
 
 
 
