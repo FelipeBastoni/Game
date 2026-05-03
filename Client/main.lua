@@ -34,25 +34,19 @@ function love.load()
     }
 
     p_up = {
-
         love.graphics.newImage("primeupstep1.png"), 
         love.graphics.newImage("primeupstep2.png") 
 
     }
 
     p_down = {
-
         love.graphics.newImage("primedownstep1.png"), 
         love.graphics.newImage("primedownstep2.png"), 
 
     }
 
 
-  --Cenário
 
-    grama = love.graphics.newImage("grama.png")
-
-    tiro = love.graphics.newImage("zumbi.png")
 
 
 
@@ -104,6 +98,10 @@ function love.load()
     shoot = {}
 
  --Barras
+
+   --Timer de Regeneração
+    reg_timer = 0
+
    --Barra de Stamina
     tamanho_s = 243
     braltura_s = 14
@@ -112,14 +110,14 @@ function love.load()
     board_s = 2
 
   --Barra de Vida
-    tamanho_v = 243
+    tamanho_v = 3
     braltura_v = 14
     brx_v = 36
     bry_v = 16
     board_v = 2
 
   --Barra de Defesa
-    tamanho_d = 243
+    tamanho_d = 0
     braltura_d = 14
     brx_d = 36
     bry_d = 16
@@ -168,10 +166,70 @@ function love.load()
    --Resolução/tamanho da tela
     love.window.setMode(1920, 1080)
 
+
+
+
+
+
+
+
+ --Variáveis do cenário
+
+    mapa = {}    
+  --Altura da imagem (tile)
+    tile_height = 192
+  --Largura da imagem (tile)
+    tile_width  = 192 
+    
+  --Numero de imagens (tiles) na horizontal
+    local h_tiles       
+
+  --Numero de imagens (tiles) na vertical
+    local v_tiles      
+
+  --Numero de imagens (tiles) visiveis
+    local visible_tiles 
+
+  -- ponto esquerdo do cenário que será apresentado
+    left_corner = 1 
+
+
+
+  --Imagens do Cenário
+
+    grama = love.graphics.newImage("grama.png")
+
+    stone = love.graphics.newImage("grama.png")
+    sky = love.graphics.newImage("grama.png")
+
+    tiro = love.graphics.newImage("zumbi.png")
+
+ --Carrega o Cenário
+
+    LoadMap("mapa.txt") 
+
+
 end
 
 
+--Função para carregar o mapa
 
+function LoadMap(filename)       -- Carrega o arquivo com o mapa de padrões
+  local file = io.open(filename) -- Abre o arquivo 
+  local i = 1                    -- Prepara para carregar a 1a. linha
+  for line in file:lines() do    -- Para cada linha do arquivo do Mapa
+    mapa[i] = {}                 -- Cria um vetor horizontal para uma linha
+    for j = 1, #line, 1 do       -- Carrega a linha
+      mapa[i][j] = line:sub(j,j) -- Carrega cada elemento da linha
+    end
+    i = i + 1                    -- Passa para a próxima linha
+    h_tiles = #line  -- determina o número de padrões na horizontal
+    v_tiles = i - 1  -- determina o número de padrões na vertical
+    -- determina o número de padrões visíveis
+    visible_tiles = math.floor(love.graphics.getWidth()/tile_width) 
+  end
+  file:close()   -- Fecha o arquivo
+end
 
 
 
@@ -300,7 +358,7 @@ function processPacket(t)
         inimigo[idip].y = 0
         inimigo[idip].speed = 0
         inimigo[idip].position = ""
-        inimigo[idip].sprite = p_default[3]
+        inimigo[idip].sprite = tiro
         inimigo[idip].id = idip
 
         table.insert(inimigos, idip)
@@ -384,7 +442,7 @@ function processPacket(t)
                 y = 0,
                 speed = 0,
                 position = "",
-                sprite = p_default[3],
+                sprite = tiro,
                 id = idip
             }
 
@@ -394,7 +452,7 @@ function processPacket(t)
         inimigo[idip].y = 0
         inimigo[idip].speed = 0
         inimigo[idip].position = ""
-        inimigo[idip].sprite = p_default[3]
+        inimigo[idip].sprite = tiro
         inimigo[idip].id = idip
 
 
@@ -472,6 +530,7 @@ function love.update(dt)
 
     timer = timer + dt
     step = step + dt
+    reg_timer = reg_timer + dt
 
 
   --Animação tela inicial
@@ -633,14 +692,16 @@ function love.update(dt)
   --Correr com Shift
 
     if love.keyboard.isDown("lshift") then
+
         
+        player.speed = 750
+        braltura_s = 14
+        brx_s = 36
+        bry_s = 16
+        board_s = 2
+
         if tamanho_s >= 1 then
 
-            player.speed = 750
-            braltura_s = 14
-            brx_s = 36
-            bry_s = 16
-            board_s = 2
             tamanho_s = tamanho_s - 1 
 
         else 
@@ -668,11 +729,35 @@ function love.update(dt)
 
     end
 
+    
+  --Regenração do Escudo
 
+    if reg_timer > 1.75 and tamanho_d <= 4 then
 
+        reg_timer = 0
+        tamanho_d = tamanho_d + 1
 
+        print(tamanho_d)
 
+    end 
 
+    if tamanho_d == 1 then 
+
+        braltura_d = 14
+        brx_d = 36
+        bry_d = 16
+        board_d = 2
+
+    end
+
+    if tamanho_d == 0 then
+
+        braltura_d = 0
+        brx_d = 0
+        bry_d = 0
+        board_d = 0
+
+    end
 
 
 
@@ -696,7 +781,7 @@ function love.update(dt)
     if love.mouse.isDown(1) and t_bullet == false then
 
         t_bullet = true
-           
+
         a = a + 1
 
         tx = mx
@@ -790,11 +875,11 @@ function initial()
 
   --Define o fundo
     fundo = love.graphics.newImage("AAA.png")
-    
+
   --Define a fonte
     fonte = love.graphics.newFont(25)
     love.graphics.setFont(fonte)
-    
+
   --Printa o fundo
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.draw(fundo)
@@ -858,11 +943,18 @@ function love.draw()
 
     --Gerador de Cenário
 
-        for x = 0, 1910, 191 do
-            for y = 0, 1146, 191 do 
-                love.graphics.draw(grama, x, y)
-            end
+    for i = 1, v_tiles, 1 do
+        for j = left_corner, left_corner+visible_tiles, 1 do
+        if (mapa[i][j] == "C") then
+            love.graphics.draw(sky, ((j-left_corner)*tile_height), ((i-1)*tile_width))
+        elseif (mapa[i][j] == "G") then
+            love.graphics.draw(grama, ((j-left_corner)*tile_height), ((i-1)*tile_width))
+        elseif (mapa[i][j] == "P") then
+            love.graphics.draw(stone, ((j-left_corner)*tile_height), ((i-1)*tile_width))
         end
+        end
+    end
+
 
 
     -- Array da party
@@ -874,7 +966,7 @@ function love.draw()
 
 
     --Array dos inimigos
-    
+
     if #inimigos > 0 then
 
         for n=1, #inimigos, 1 do
@@ -888,7 +980,7 @@ function love.draw()
     if a > 0 then
 
         for u=1, a ,1 do
-           
+
             drawtiro(u)
 
         end
@@ -907,34 +999,31 @@ function love.draw()
         love.graphics.pop()
 
 
-    --HUD
+    --HUDs
 
-      --Fundo do HUD
+     --Barras de status
 
         love.graphics.setColor(0.5, 0.5, 0.5)
         love.graphics.rectangle("fill", 10, 10, 276, 70, 6, 6)
 
 
       --Barra de vida
-
         love.graphics.setColor(0, 0, 0)
         love.graphics.rectangle("fill", 35, 15, 246, 17, 2)
 
         love.graphics.setColor(1, 0, 0)
-        love.graphics.rectangle("fill", brx_v, bry_v, tamanho_v, braltura_v, board_v, board_v)
+        love.graphics.rectangle("fill", brx_v, bry_v, (tamanho_v*81), braltura_v, board_v, board_v)
 
 
       --Barra de Escudo
-
         love.graphics.setColor(0, 0, 0)
         love.graphics.rectangle("fill", 35, 36, 246, 17, 2)
 
         love.graphics.setColor(0, 0, 1)
-        love.graphics.rectangle("fill", brx_d, bry_d+21, tamanho_d, braltura_d, board_d, board_d)
+        love.graphics.rectangle("fill", brx_d, bry_d+21, (tamanho_d*48.6), braltura_d, board_d, board_d)
 
 
       --Barra de stamina
-
         love.graphics.setColor(0, 0, 0)
         love.graphics.rectangle("fill", 35, 57, 246, 17, 2)
 
@@ -943,48 +1032,46 @@ function love.draw()
 
 
 
-     --Animação das barras  
 
-      --Barra de vida
+     --Slot de arma
 
-        if tamanho_v > 0 then 
+        love.graphics.setColor(0.5, 0.5, 0.5)
+        love.graphics.rectangle("fill", 50, 800, 150, 150, 6, 6)
 
-            tamanho_v = tamanho_v - 1
-
-            if tamanho_v <=0 then
-
-                braltura_v = 0
-                brx_v = 0
-                bry_v = 0
-                board_v = 0
-            
-            end
-
-        end
+        love.graphics.setColor(0, 0, 0)
+        love.graphics.rectangle("fill", 54, 804, 142, 142, 6, 6)
 
 
-      --Barra de defesa
 
-        if tamanho_d > 0 then 
 
-            tamanho_d = tamanho_d - 1
+     --Slots de itens
 
-            if tamanho_d <=0 then
+        love.graphics.setColor(0.5, 0.5, 0.5)
+        love.graphics.rectangle("fill", 1420, 10, 480, 86, 6, 6)
 
-                braltura_d = 0
-                brx_d = 0
-                bry_d = 0
-                board_d = 0
+        love.graphics.setColor(0, 0, 0)
 
-            end
+      --Slot 1  
+        love.graphics.rectangle("fill", 1423, 13, 80, 80, 6, 6)
+     
+      --Slot 2    
+        love.graphics.rectangle("fill", 1506, 13, 80, 80, 6, 6)
 
-        end
+      --Slot 3
+        love.graphics.rectangle("fill", 1589, 13, 80, 80, 6, 6)
+
+      --Slot 4    
+        love.graphics.rectangle("fill", 1672, 13, 80, 80, 6, 6)
+
+      --Slot 5 
+        love.graphics.rectangle("fill", 1755, 13, 80, 80, 6, 6)
 
 
 
 
 
 
+      --Reseta cores
         love.graphics.setColor(1,1,1)
 
     end
@@ -992,11 +1079,6 @@ function love.draw()
 
 
 end
-
-
-
-
-
 
 
 
