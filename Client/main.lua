@@ -52,12 +52,13 @@ function love.load()
 
     grama = love.graphics.newImage("grama.png")
 
+    tiro = love.graphics.newImage("zumbi.png")
+
+
 
 
  --Operadores
 
-  --Array de dados recebidos do Servidor
-    --t = {}
 
   --Status de spawn
     en = false
@@ -96,7 +97,33 @@ function love.load()
  --Timer da animação da Tela inicial
     cut_timer = 1
     
+ --Timer dos tiros
+    shoots = 0
+    a = 0
+    t_bullet = false
+    shoot = {}
 
+ --Barras
+   --Barra de Stamina
+    tamanho_s = 243
+    braltura_s = 14
+    brx_s = 36
+    bry_s = 16
+    board_s = 2
+
+  --Barra de Vida
+    tamanho_v = 243
+    braltura_v = 14
+    brx_v = 36
+    bry_v = 16
+    board_v = 2
+
+  --Barra de Defesa
+    tamanho_d = 243
+    braltura_d = 14
+    brx_d = 36
+    bry_d = 16
+    board_d = 2
 
 
  --objetos
@@ -606,11 +633,103 @@ function love.update(dt)
   --Correr com Shift
 
     if love.keyboard.isDown("lshift") then
-        player.speed = 750
+        
+        if tamanho_s >= 1 then
+
+            player.speed = 750
+            braltura_s = 14
+            brx_s = 36
+            bry_s = 16
+            board_s = 2
+            tamanho_s = tamanho_s - 1 
+
+        else 
+            player.speed = 450
+
+            braltura_s = 0
+            brx_s = 0
+            bry_s = 0
+            board_s = 0
+        end
+    
     else 
+        
         player.speed = 450
+
+        if tamanho_s <= 243 then
+
+            tamanho_s = tamanho_s + 1
+            braltura_s = 14
+            brx_s = 36
+            bry_s = 16
+            board_s = 2
+
+        end
+
     end
 
+
+
+
+
+
+
+
+
+
+  --Mouse 
+
+    if t_bullet == true then
+
+        shoots = shoots + dt
+
+        if shoots > 0.1 then
+
+            t_bullet = false
+            shoots = 0
+
+        end
+
+    end
+
+
+    if love.mouse.isDown(1) and t_bullet == false then
+
+        t_bullet = true
+           
+        a = a + 1
+
+        tx = mx
+        ty = my
+
+        ger_tiro(tx, ty, a)
+
+
+    end
+
+
+
+  --Disparos
+
+    function ger_tiro(tx, ty, a)
+
+        shoot[a] = {}
+        shoot[a].x = tx
+        shoot[a].y = ty
+        shoot[a].id = a
+
+        print(shoot[a].id)
+
+        drawtiro(a)
+
+    end
+
+    function drawtiro(a)
+
+
+        love.graphics.draw(tiro, shoot[a].x, shoot[a].y)
+
+    end
 
 
 
@@ -621,6 +740,19 @@ function love.update(dt)
         messager(player.position, player.x, player.y, player.speed, id)
         timer = 0
     end
+
+
+
+
+
+ 
+
+
+
+
+
+
+
 
 
 end
@@ -752,6 +884,17 @@ function love.draw()
 
     end
 
+
+    if a > 0 then
+
+        for u=1, a ,1 do
+           
+            drawtiro(u)
+
+        end
+
+    end
+
     
     --Gera Personagem
 
@@ -764,9 +907,97 @@ function love.draw()
         love.graphics.pop()
 
 
+    --HUD
+
+      --Fundo do HUD
+
+        love.graphics.setColor(0.5, 0.5, 0.5)
+        love.graphics.rectangle("fill", 10, 10, 276, 70, 6, 6)
+
+
+      --Barra de vida
+
+        love.graphics.setColor(0, 0, 0)
+        love.graphics.rectangle("fill", 35, 15, 246, 17, 2)
+
+        love.graphics.setColor(1, 0, 0)
+        love.graphics.rectangle("fill", brx_v, bry_v, tamanho_v, braltura_v, board_v, board_v)
+
+
+      --Barra de Escudo
+
+        love.graphics.setColor(0, 0, 0)
+        love.graphics.rectangle("fill", 35, 36, 246, 17, 2)
+
+        love.graphics.setColor(0, 0, 1)
+        love.graphics.rectangle("fill", brx_d, bry_d+21, tamanho_d, braltura_d, board_d, board_d)
+
+
+      --Barra de stamina
+
+        love.graphics.setColor(0, 0, 0)
+        love.graphics.rectangle("fill", 35, 57, 246, 17, 2)
+
+        love.graphics.setColor(0, 1, 0)
+        love.graphics.rectangle("fill", brx_s, bry_s+42, tamanho_s, braltura_s, board_s, board_s)
+
+
+
+     --Animação das barras  
+
+      --Barra de vida
+
+        if tamanho_v > 0 then 
+
+            tamanho_v = tamanho_v - 1
+
+            if tamanho_v <=0 then
+
+                braltura_v = 0
+                brx_v = 0
+                bry_v = 0
+                board_v = 0
+            
+            end
+
+        end
+
+
+      --Barra de defesa
+
+        if tamanho_d > 0 then 
+
+            tamanho_d = tamanho_d - 1
+
+            if tamanho_d <=0 then
+
+                braltura_d = 0
+                brx_d = 0
+                bry_d = 0
+                board_d = 0
+
+            end
+
+        end
+
+
+
+
+
+
+        love.graphics.setColor(1,1,1)
 
     end
 
 
 
 end
+
+
+
+
+
+
+
+
+
