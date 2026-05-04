@@ -82,6 +82,9 @@ function love.load()
   --Array dos inimigos
     inimigos = {}
 
+  --Array dos itens
+    itens = {}
+
  --Executor do jogo
     runner = false
 
@@ -160,6 +163,17 @@ function love.load()
     inimigo[idi].id = idi
 
 
+  --Itens
+
+    item = {}
+    item[idi] = {}
+    item[idi].x = 0
+    item[idi].y = 0
+    item[idi].tipo = ""
+    item[idi].sprite = tiro
+    item[idi].id = idi
+
+
 
  --Configuração da janela
 
@@ -186,9 +200,6 @@ function love.load()
 
   --Numero de imagens (tiles) na vertical
     local v_tiles      
-
-  --Numero de imagens (tiles) visiveis
-    local visible_tiles 
 
   -- ponto esquerdo do cenário que será apresentado
     left_corner = 1 
@@ -226,7 +237,6 @@ function LoadMap(filename)       -- Carrega o arquivo com o mapa de padrões
     h_tiles = #line  -- determina o número de padrões na horizontal
     v_tiles = i - 1  -- determina o número de padrões na vertical
     -- determina o número de padrões visíveis
-    visible_tiles = math.floor(love.graphics.getWidth()/tile_width) 
   end
   file:close()   -- Fecha o arquivo
 end
@@ -362,6 +372,27 @@ function processPacket(t)
         inimigo[idip].id = idip
 
         table.insert(inimigos, idip)
+
+        print("Gerado: "..idip)
+
+
+    end
+
+
+  --Trata inclusão de itens
+
+    if t[1] == "newu" then
+
+        idip = tonumber(t[5])
+
+        item[idip] = {}
+        item[idip].x = t[2]
+        item[idip].y = t[3]
+        item[idip].tipo = ""
+        item[idip].id = idip
+        item[idip].sprite = tiro
+
+        table.insert(itens, idip)
 
         print("Gerado: "..idip)
 
@@ -944,14 +975,14 @@ function love.draw()
     --Gerador de Cenário
 
     for i = 1, v_tiles, 1 do
-        for j = left_corner, left_corner+visible_tiles, 1 do
-        if (mapa[i][j] == "C") then
-            love.graphics.draw(sky, ((j-left_corner)*tile_height), ((i-1)*tile_width))
-        elseif (mapa[i][j] == "G") then
-            love.graphics.draw(grama, ((j-left_corner)*tile_height), ((i-1)*tile_width))
-        elseif (mapa[i][j] == "P") then
-            love.graphics.draw(stone, ((j-left_corner)*tile_height), ((i-1)*tile_width))
-        end
+        for j = left_corner, h_tiles, 1 do
+            if (mapa[i][j] == "C") then
+                love.graphics.draw(sky, ((j-left_corner)*tile_height), ((i-1)*tile_width))
+            elseif (mapa[i][j] == "G") then
+                love.graphics.draw(grama, ((j-left_corner)*tile_height), ((i-1)*tile_width))
+            elseif (mapa[i][j] == "P") then
+                love.graphics.draw(stone, ((j-left_corner)*tile_height), ((i-1)*tile_width))
+            end
         end
     end
 
@@ -959,10 +990,10 @@ function love.draw()
 
     -- Array da party
 
-        for n=1, #jogadores, 1 do
-            infa = jogadores[n]
-            love.graphics.draw(party[infa].sprite, party[infa].x, party[infa].y)
-        end
+    for n=1, #jogadores, 1 do
+        infa = jogadores[n]
+        love.graphics.draw(party[infa].sprite, party[infa].x, party[infa].y)
+    end
 
 
     --Array dos inimigos
@@ -975,6 +1006,24 @@ function love.draw()
         end
 
     end
+
+
+    --Desenha item
+
+    if #itens > 0 then
+
+        for n=1, #itens, 1 do
+
+            ite = itens[n]
+
+            love.graphics.setColor(1,1,1)
+            love.graphics.draw(item[ite].sprite, item[ite].x, item[ite].y)
+
+        end
+
+    end
+
+
 
 
     if a > 0 then
@@ -1079,7 +1128,3 @@ function love.draw()
 
 
 end
-
-
-
-
