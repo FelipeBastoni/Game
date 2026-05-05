@@ -70,6 +70,10 @@ function love.load()
     mx = 0
     my = 0
 
+  --Versor de movimento do player
+    vx = 0
+    vy = 0
+
   --Definidor de ID das conexões/clientes
     id = 0 
 
@@ -653,7 +657,7 @@ function love.update(dt)
     if love.keyboard.isDown("w") then        
         player.y = player.y - player.speed * dt
         player.sprite = p_up[1]
-
+        vy = player.y + player.speed * dt
 
         --Animação do Personagem
         if step > 0.25 then
@@ -671,6 +675,7 @@ function love.update(dt)
     if love.keyboard.isDown("s") then
         player.y = player.y + player.speed * dt
         player.sprite = p_down[1]
+        vy = player.y + player.speed * dt
 
 
         if step > 0.25 then
@@ -688,6 +693,7 @@ function love.update(dt)
     if love.keyboard.isDown("a") then
         player.x = player.x - player.speed * dt
         player.sprite = p_left[1]
+        vx = player.x + player.speed * dt
 
 
         if step > 0.25 then
@@ -705,6 +711,7 @@ function love.update(dt)
     if love.keyboard.isDown("d") then
         player.x = player.x + player.speed * dt
         player.sprite = p_right[1]
+        vx = player.x - player.speed * dt
 
 
         if step > 0.25 then
@@ -859,9 +866,63 @@ function love.update(dt)
 
 
 
+    if love.keyboard.isDown("z") then
+
+        player.x = 100
+        player.y =100
+
+    end
 
 
- 
+
+
+    if runner == 7 then
+
+        print(player.x, player.y)
+
+        if player.x <= 100 and player.y  >= 0 then
+
+            player.x = 100
+
+            player.y = player.y
+
+
+        end
+
+    end
+
+
+    
+--Colisão
+
+    if runner == 7 then
+
+        for i=1, #player, 1 do 
+            for j=1, #inimigo, 1 do
+            
+                v_colisao_a = player[i]
+                v_colisao_b = inimigo[j]
+
+
+                if checkCollision(v_colisao_a, v_colisao_b) then
+
+                    player.x = player.x - vx
+
+                end
+
+                if checkCollision(v_colisao_a, v_colisao_b) then
+
+                    player.y = player.y - vy
+
+                end
+
+
+            end
+
+        end
+
+    end
+
 
 
 
@@ -878,11 +939,16 @@ end
 
 
 
+function checkCollision(v_colisao_a, v_colisao_b)
 
+    return v_colisao_a.x < v_colisao_b.x + 192 and 
+           v_colisao_a.x + 192 > v_colisao_b.x and
+       
+           v_colisao_a.y < v_colisao_b.x + 192 and
+           v_colisao_a + 192 > v_colisao_b.y
 
-
-
-
+end
+        
 
 
 
