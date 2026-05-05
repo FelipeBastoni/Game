@@ -900,11 +900,11 @@ function love.update(dt)
 
     if runner == 7 and #inimigo > 0 then
 
-        for j=1, #inimigo, 1 do
+        for p=1, #inimigo, 1 do
             
-            v_colisao_a = inimigo[j]
+            v_colisao_a = inimigo[p]
 
-            print(player.x, player.y, v_colisao_a.x, v_colisao_a.y)
+            print(p)
 
 
             if checkCollision(player, v_colisao_a) == true then
