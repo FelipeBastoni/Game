@@ -657,7 +657,8 @@ function love.update(dt)
     if love.keyboard.isDown("w") then        
         player.y = player.y - player.speed * dt
         player.sprite = p_up[1]
-        vy = player.y + player.speed * dt
+
+        vy = 1
 
         --Animação do Personagem
         if step > 0.25 then
@@ -675,7 +676,8 @@ function love.update(dt)
     if love.keyboard.isDown("s") then
         player.y = player.y + player.speed * dt
         player.sprite = p_down[1]
-        vy = player.y + player.speed * dt
+
+        vy = -1
 
 
         if step > 0.25 then
@@ -693,7 +695,8 @@ function love.update(dt)
     if love.keyboard.isDown("a") then
         player.x = player.x - player.speed * dt
         player.sprite = p_left[1]
-        vx = player.x + player.speed * dt
+
+        vx = 1
 
 
         if step > 0.25 then
@@ -711,7 +714,8 @@ function love.update(dt)
     if love.keyboard.isDown("d") then
         player.x = player.x + player.speed * dt
         player.sprite = p_right[1]
-        vx = player.x - player.speed * dt
+
+        vx = -1
 
 
         if step > 0.25 then
@@ -878,9 +882,8 @@ function love.update(dt)
 
     if runner == 7 then
 
-        print(player.x, player.y)
 
-        if player.x <= 100 and player.y  >= 0 then
+        if player.x <= 100 and player.y  >= -1000 then
 
             player.x = 100
 
@@ -895,35 +898,41 @@ function love.update(dt)
     
 --Colisão
 
-    if runner == 7 then
+    if runner == 7 and #inimigo > 0 then
 
-        for i=1, #player, 1 do 
-            for j=1, #inimigo, 1 do
+        for j=1, #inimigo, 1 do
             
-                v_colisao_a = player[i]
-                v_colisao_b = inimigo[j]
+            v_colisao_a = inimigo[j]
+
+            print(player.x, player.y, v_colisao_a.x, v_colisao_a.y)
 
 
-                if checkCollision(v_colisao_a, v_colisao_b) then
+            if checkCollision(player, v_colisao_a) == true then
 
-                    player.x = player.x - vx
+                player.x = nvx
+            
+            end
 
-                end
+            if checkCollision(player, v_colisao_a) == false then
 
-                if checkCollision(v_colisao_a, v_colisao_b) then
-
-                    player.y = player.y - vy
-
-                end
-
+                nvx = player.x
+                nvy = player.y
 
             end
+
+
+            if checkCollision(player, v_colisao_a) then
+
+                player.y = nvy
+
+            end
+
+
+
 
         end
 
     end
-
-
 
 
 
@@ -939,13 +948,23 @@ end
 
 
 
-function checkCollision(v_colisao_a, v_colisao_b)
 
-    return v_colisao_a.x < v_colisao_b.x + 192 and 
-           v_colisao_a.x + 192 > v_colisao_b.x and
+
+
+
+
+
+
+
+
+
+function checkCollision(a, b)
+
+    return tonumber(a.x) < tonumber(b.x) + 96 and 
+           tonumber(a.x) + 96 > tonumber(b.x) and
        
-           v_colisao_a.y < v_colisao_b.x + 192 and
-           v_colisao_a + 192 > v_colisao_b.y
+           tonumber(a.y) < tonumber(b.y) + 96 and
+           tonumber(a.y) + 96 > tonumber(b.y)
 
 end
         
@@ -1058,7 +1077,7 @@ function love.draw()
 
     for n=1, #jogadores, 1 do
         infa = jogadores[n]
-        love.graphics.draw(party[infa].sprite, party[infa].x, party[infa].y)
+        love.graphics.draw(party[infa].sprite, party[infa].x, party[infa].y, 0, 1, 1, party[infa].sprite:getWidth()/2, party[infa].sprite:getHeight()/2)
     end
 
 
@@ -1068,7 +1087,7 @@ function love.draw()
 
         for n=1, #inimigos, 1 do
             infa = inimigos[n]
-            love.graphics.draw(inimigo[infa].sprite, inimigo[infa].x, inimigo[infa].y)
+            love.graphics.draw(inimigo[infa].sprite, inimigo[infa].x, inimigo[infa].y, 0, 1, 1, inimigo[infa].sprite:getWidth()/2, inimigo[infa].sprite:getHeight()/2)
         end
 
     end
@@ -1194,3 +1213,6 @@ function love.draw()
 
 
 end
+
+nvx = 0
+nvy = 0
