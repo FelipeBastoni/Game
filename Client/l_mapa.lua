@@ -4,6 +4,13 @@ local l_mapa = {}
 
 mapa = {}
 
+--Numero de imagens (tiles) na horizontal
+local h_tiles       
+
+--Numero de imagens (tiles) na vertical
+local v_tiles      
+
+
 --Função para carregar o mapa
 
 function l_mapa.LoadMap(filename)       -- Carrega o arquivo com o mapa de padrões
@@ -21,7 +28,7 @@ function l_mapa.LoadMap(filename)       -- Carrega o arquivo com o mapa de padr�
   end
   file:close()   -- Fecha o arquivo
 
-  return mapa
+  return mapa, h_tiles, v_tiles
 
 end
 
