@@ -1,5 +1,8 @@
 
 local l_mapa = require("l_mapa")
+local tela_inicial = require("tela_inicial")
+
+
 
 --Configurações para conectar ao servidor
 
@@ -49,41 +52,19 @@ function love.load()
 
 
 
+  --Imagens do Cenário
+
+    grama = love.graphics.newImage("grama.png")
+    stone = love.graphics.newImage("grama.png")
+    sky = love.graphics.newImage("grama.png")
+    tiro = love.graphics.newImage("zumbi.png")
 
 
 
-
- --Operadores
+ --Array's
 
   --Array de colisões do mapa
-
     co_mun = {}
-
-  --Status de spawn
-    en = false
-
-  --Time step das animações
-    step = 0
-
-  --Time step do envio de pacotes
-    timer = 0
-
-  --Posição do personagem
-    position = ""
-
-  --Posição do mouse
-    mx = 0
-    my = 0
-
-  --Versor de movimento do player
-    vx = 0
-    vy = 0
-
-  --Definidor de ID das conexões/clientes
-    id = 0 
-
-  --Definidor de ID dos Inimigos
-    idi = 0
 
   --Array das conexões/clientes
     jogadores = {}
@@ -94,49 +75,19 @@ function love.load()
   --Array dos itens
     itens = {}
 
- --Executor do jogo
-    runner = false
-
- --Alfa da animação da tela inicial
-    alfa = 0.5
     
- --Timer da animação da Tela inicial
-    cut_timer = 1
-    
- --Timer dos tiros
-    shoots = 0
-    a = 0
-    t_bullet = false
-    shoot = {}
 
- --Barras
+ --Indexadores
 
-   --Timer de Regeneração
-    reg_timer = 0
+  --Definidor de ID das conexões/clientes
+    id = 0 
 
-   --Barra de Stamina
-    tamanho_s = 243
-    braltura_s = 14
-    brx_s = 36
-    bry_s = 16
-    board_s = 2
-
-  --Barra de Vida
-    tamanho_v = 3
-    braltura_v = 14
-    brx_v = 36
-    bry_v = 16
-    board_v = 2
-
-  --Barra de Defesa
-    tamanho_d = 0
-    braltura_d = 14
-    brx_d = 36
-    bry_d = 16
-    board_d = 2
+  --Definidor de ID dos Inimigos
+    idi = 0
 
 
- --objetos
+
+ --Objetos
 
   --player
 
@@ -184,53 +135,118 @@ function love.load()
 
 
 
- --Configuração da janela
+ --Executor do jogo
+    runner = false
 
+ --Time step do envio de pacotes
+    timer = 0
+
+
+
+
+
+
+ --Variavés de Animações
+
+  --Time step das animações
+    step = 0
+
+  --Posição do mouse
+    mx = 0
+    my = 0
+
+  --Posição do personagem
+    position = ""
+
+ --Alfa da animação da tela inicial
+    alfa = 0.5
+    
+ --Timer da animação da Tela inicial
+    cut_timer = 1
+
+
+
+ --Colisão
+
+  --Versor de movimento do player
+    vx = 0
+    vy = 0
+
+  --Ultima posição confirmada
+    nvx = 0
+    nvy = 0
+
+
+ --Tiros
+
+ --Timer dos tiros
+    shoots = 0
+    a = 0
+    t_bullet = false
+    shoot = {}
+
+
+
+ --Barras
+
+   --Timer de Regeneração
+    reg_timer = 0
+
+   --Barra de Stamina
+    tamanho_s = 243
+    braltura_s = 14
+    brx_s = 36
+    bry_s = 16
+    board_s = 2
+
+  --Barra de Vida
+    tamanho_v = 3
+    braltura_v = 14
+    brx_v = 36
+    bry_v = 16
+    board_v = 2
+
+  --Barra de Defesa
+    tamanho_d = 0
+    braltura_d = 14
+    brx_d = 36
+    bry_d = 16
+    board_d = 2
+
+
+
+ --Configuração da janela
     win_x, win_y = love.window.getDesktopDimensions()
 
 
-   --Resolução/tamanho da tela
-    love.window.setMode(1920, 1080)
-
-
-
-
-
-
+ --Resolução/tamanho da tela
+    love.window.setMode(win_x, win_y)
 
 
  --Variáveis do cenário
 
-    mapa = {}    
+  --Array para procesamento do mapa
+    mapa = {}
+
   --Altura da imagem (tile)
     tile_height = 192
+
   --Largura da imagem (tile)
     tile_width  = 192 
-    
+
   --Numero de imagens (tiles) na horizontal
-    local h_tiles       
+    h_tiles = 0       
 
   --Numero de imagens (tiles) na vertical
-    local v_tiles      
+    v_tiles = 0      
 
-  -- ponto esquerdo do cenário que será apresentado
+  --Ponto esquerdo do cenário que será apresentado
     left_corner = 1 
 
 
-
-  --Imagens do Cenário
-
-    grama = love.graphics.newImage("grama.png")
-
-    stone = love.graphics.newImage("grama.png")
-    sky = love.graphics.newImage("grama.png")
-
-    tiro = love.graphics.newImage("zumbi.png")
-
  --Carrega o Cenário
 
-    mapa = l_mapa.LoadMap("mapa.txt") 
-
+    mapa, h_tiles, v_tiles = l_mapa.LoadMap("mapa.txt") 
 
 end
 
@@ -251,7 +267,6 @@ function messager(sentido, x, y, vida, id)
     host:flush()
 
 end
-
 
 
 
@@ -487,18 +502,14 @@ end
 
 function conn()
 
-
     while true do
         
         local event = host:service(0)
-
         if not event then break end
-
 
      --Quando temos resposta do servidor
 
         if event then
-
 
          --checa conexão
 
@@ -520,20 +531,8 @@ function conn()
 
 
         end
-
     end
-
 end
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -573,12 +572,7 @@ function love.update(dt)
 
 
 
-        
-
-
-
  --Posição do Personagem:
-
 
     position = "P"
 
@@ -605,10 +599,7 @@ function love.update(dt)
 
  --Movimentação do Personagem:
 
-
   --Define Sprite por posição do mouse
-
-
     mx = love.mouse.getX()
     my = love.mouse.getY()
 
@@ -625,8 +616,6 @@ function love.update(dt)
     elseif mx >= 864 and mx <= 1056 and my < 540  then
         player.position = "PU"
     end
-
-
 
 
 
@@ -786,6 +775,7 @@ function love.update(dt)
 
   --Mouse 
 
+
     if t_bullet == true then
 
         shoots = shoots + dt
@@ -846,15 +836,6 @@ function love.update(dt)
     if timer >= 0.042 and id ~= 0 then
         messager(player.position, player.x, player.y, player.speed, id)
         timer = 0
-    end
-
-
-
-    if love.keyboard.isDown("z") then
-
-        player.x = 100
-        player.y =100
-
     end
 
 
@@ -942,18 +923,6 @@ end
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 function checkCollision(a, b)
 
     return tonumber(a.x) < tonumber(b.x) + 96 and 
@@ -963,53 +932,7 @@ function checkCollision(a, b)
            tonumber(a.y) + 96 > tonumber(b.y)
 
 end
-        
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
---Chama a tela inicial
-
-function initial()
-
-  --Define o fundo
-    fundo = love.graphics.newImage("AAA.png")
-
-  --Define a fonte
-    fonte = love.graphics.newFont(25)
-    love.graphics.setFont(fonte)
-
-  --Printa o fundo
-    love.graphics.setColor(1, 1, 1, 1)
-    love.graphics.draw(fundo)
-    text = "PRESSIONE A TECLA ESPAÇO PARA JOGAR"
-    love.graphics.setColor(1, 1, 1, alfa)
-    love.graphics.print(text, (love.graphics.getWidth() - love.graphics.getFont():getWidth(text))/2, (love.graphics.getHeight()/2)+250)
-
-    love.graphics.setColor(1, 1, 1, 1)
-
-end
-
-
-
---Limpa a tela inicial
-
-function start()
-    love.graphics.clear(0, 0, 0)
-end
 
 
 
@@ -1017,18 +940,16 @@ end
 
 function love.draw()
 
-
   --Lógica de exibição tela inicial ---> jogo
 
     if runner == false then
-        initial()
+        tela_inicial.initial(alfa)
     end
 
     if runner == true then
-        start()
+        tela_inicial.start()
         runner = 7
     end
-
 
 
   --Jogo rodando
@@ -1219,13 +1140,6 @@ function love.draw()
 
 end
 
-nvx = 0
-nvy = 0
 
 
 
-
---- Condição com y para definir quem vai ficar sobrepondo quem
---se y de player maior primeiro desenha o zumbi, depois desenha o player 
--- e vice versa, atualizar por frame
--- se pesar muito no processamento, intercalar, hora player na frente, hora zumbi
