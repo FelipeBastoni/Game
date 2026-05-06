@@ -53,6 +53,9 @@ function love.load()
 
  --Operadores
 
+  --Array de colisões do mapa
+
+    co_mun = {}
 
   --Status de spawn
     en = false
@@ -180,6 +183,9 @@ function love.load()
 
 
  --Configuração da janela
+
+    win_x, win_y = love.window.getDesktopDimensions()
+
 
    --Resolução/tamanho da tela
     love.window.setMode(1920, 1080)
@@ -779,7 +785,6 @@ function love.update(dt)
         reg_timer = 0
         tamanho_d = tamanho_d + 1
 
-        print(tamanho_d)
 
     end 
 
@@ -892,6 +897,29 @@ function love.update(dt)
 
         end
 
+
+        for j=1, #co_mun, 1 do
+            
+            v_colisao_a = co_mun[j]
+
+            print(j)
+
+            if checkCollision(player, v_colisao_a) == true then
+
+                player.x = nvx
+            
+            end
+
+
+            if checkCollision(player, v_colisao_a) then
+
+                player.y = nvy
+
+            end
+
+        end
+
+
     end
 
 
@@ -900,24 +928,16 @@ function love.update(dt)
 
     if runner == 7 and #inimigo > 0 then
 
-        for p=1, #inimigo, 1 do
+        for j=1, #inimigo, 1 do
             
-            v_colisao_a = inimigo[p]
+            v_colisao_a = inimigo[j]
 
-            print(p)
-
+            print(j)
 
             if checkCollision(player, v_colisao_a) == true then
 
                 player.x = nvx
             
-            end
-
-            if checkCollision(player, v_colisao_a) == false then
-
-                nvx = player.x
-                nvy = player.y
-
             end
 
 
@@ -934,7 +954,8 @@ function love.update(dt)
 
     end
 
-
+    nvx = player.x
+    nvy = player.y
 
 
 
@@ -1061,8 +1082,17 @@ function love.draw()
 
     for i = 1, v_tiles, 1 do
         for j = left_corner, h_tiles, 1 do
-            if (mapa[i][j] == "C") then
-                love.graphics.draw(sky, ((j-left_corner)*tile_height), ((i-1)*tile_width))
+            if (mapa[i][j] == "T") then
+
+
+                table.insert(co_mun, {
+
+                x = (j-left_corner)*tile_height,
+                y = (i-1)*tile_width})
+
+
+
+                love.graphics.draw(grama, ((j-left_corner)*tile_height), ((i-1)*tile_width))
             elseif (mapa[i][j] == "G") then
                 love.graphics.draw(grama, ((j-left_corner)*tile_height), ((i-1)*tile_width))
             elseif (mapa[i][j] == "P") then
@@ -1216,3 +1246,11 @@ end
 
 nvx = 0
 nvy = 0
+
+
+
+
+--- Condição com y para definir quem vai ficar sobrepondo quem
+--se y de player maior primeiro desenha o zumbi, depois desenha o player 
+-- e vice versa, atualizar por frame
+-- se pesar muito no processamento, intercalar, hora player na frente, hora zumbi
