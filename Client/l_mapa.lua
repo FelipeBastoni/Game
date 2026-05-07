@@ -1,4 +1,6 @@
 
+--Carrega o mapa
+
 local l_mapa = {}
 
 
