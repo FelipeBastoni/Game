@@ -50,7 +50,6 @@ function love.load()
     }
 
 
-
   --Imagens do Cenário
 
     grama = love.graphics.newImage("grama.png")
@@ -142,9 +141,6 @@ function love.load()
 
 
 
-
-
-
  --Variavés de Animações
 
   --Time step das animações
@@ -164,6 +160,7 @@ function love.load()
     cut_timer = 1
 
 
+
  --Colisão
 
   --Versor de movimento do player
@@ -173,6 +170,7 @@ function love.load()
   --Ultima posição confirmada
     nvx = 0
     nvy = 0
+
 
 
  --Tiros
@@ -216,9 +214,9 @@ function love.load()
  --Configuração da janela
     win_x, win_y = love.window.getDesktopDimensions()
 
-
  --Resolução/tamanho da tela
     love.window.setMode(win_x, win_y)
+
 
 
  --Variáveis do cenário
@@ -242,12 +240,11 @@ function love.load()
     left_corner = 1 
 
 
- --Carrega o Cenário
 
+ --Carrega o Cenário
     mapa, h_tiles, v_tiles = l_mapa.LoadMap("mapa.txt") 
 
 end
-
 
 
 
@@ -289,7 +286,6 @@ end
 
 
 
-
 --Captador de resposta
 
 function update(xt)
@@ -303,7 +299,6 @@ function update(xt)
         processPacket(t)
     end
 end
-
 
 
 
@@ -331,7 +326,6 @@ function processPacket(t)
 
         print("novo "..id)
 
-
     end
 
 
@@ -352,7 +346,6 @@ function processPacket(t)
         table.insert(jogadores, idp)
 
         print("Carregado: "..idp)
-
 
     end
 
@@ -375,7 +368,6 @@ function processPacket(t)
 
         print("Carregado: "..idp)
 
-
     end
 
 
@@ -397,7 +389,6 @@ function processPacket(t)
 
         print("Gerado: "..idip)
 
-
     end
 
 
@@ -418,7 +409,6 @@ function processPacket(t)
 
         print("Gerado: "..idip)
 
-
     end
 
 
@@ -435,10 +425,8 @@ function processPacket(t)
         party[idp].position = t[4]
         party[idp].id = idp
 
-
     
       --Define sprite quando parado
-
         if t[4] == "PE" then
             party[idp].sprite = p_default[2]
         end
@@ -457,10 +445,7 @@ function processPacket(t)
         end
 
 
-
-
       --Define sprite quando andando
-
         if t[4] == "E" then
             party[idp].sprite = p_left[1]
         end
@@ -476,8 +461,6 @@ function processPacket(t)
         if t[4] == "S" then
             party[idp].sprite = p_down[1]
         end
-
-    
 
 
     end
@@ -508,7 +491,6 @@ function processPacket(t)
         inimigo[idip].sprite = tiro
         inimigo[idip].id = idip
 
-
     end
 
 end
@@ -533,9 +515,6 @@ end
 
 
 
-
-
-
 --Processos por frame
 
 function love.update(dt)
@@ -547,23 +526,18 @@ function love.update(dt)
     reg_timer = reg_timer + dt
 
 
-
   --Animação tela inicial
 
     if runner == false then
-
         alfa, cut_timer, runner = tela_inicial.anim(dt, alfa, cut_timer)
-
     end
 
 
-
  --Posição do Personagem:
-
     position = "P"
 
-  --Define sprite quando parado do cliente da conexão
 
+  --Define sprite quando parado do cliente da conexão
     if player.position == "PE" then
         player.sprite = p_default[2]
     end
@@ -579,8 +553,6 @@ function love.update(dt)
     if player.position == "PS" then
         player.sprite = p_default[3]
     end
-
-
 
 
  --Movimentação do Personagem:
@@ -605,11 +577,9 @@ function love.update(dt)
 
 
 
-
  --Teclado
 
   --Calcula posição do jogador de acordo com comando
-
     if love.keyboard.isDown("w") then        
         player.y = player.y - player.speed * dt
         player.sprite = p_up[1]
@@ -668,19 +638,14 @@ function love.update(dt)
             if step > 0.5 then
                 step = 0
             end
-
         end
-
     end
 
 
 
-    
   --Correr com Shift
-
     if love.keyboard.isDown("lshift") then
 
-        
         player.speed = 750
         braltura_s = 14
         brx_s = 36
@@ -690,14 +655,15 @@ function love.update(dt)
         if tamanho_s >= 1 then
 
             tamanho_s = tamanho_s - 1 
-
+       
         else 
-            player.speed = 450
 
+            player.speed = 450
             braltura_s = 0
             brx_s = 0
             bry_s = 0
             board_s = 0
+
         end
     
     else 
@@ -718,25 +684,19 @@ function love.update(dt)
 
     
   --Regenração do Escudo
-
     if reg_timer > 1.75 and tamanho_d <= 4 then
 
         reg_timer = 0
         tamanho_d = tamanho_d + 1
 
-
-    end 
-
-    if tamanho_d == 1 then 
+    elseif tamanho_d == 1 then
 
         braltura_d = 14
         brx_d = 36
         bry_d = 16
         board_d = 2
 
-    end
-
-    if tamanho_d == 0 then
+    elseif tamanho_d == 0 then
 
         braltura_d = 0
         brx_d = 0
@@ -747,9 +707,7 @@ function love.update(dt)
 
 
 
-
   --Mouse 
-
 
     if t_bullet == true then
 
@@ -776,7 +734,6 @@ function love.update(dt)
 
         ger_tiro(tx, ty, a)
 
-
     end
 
 
@@ -798,7 +755,6 @@ function love.update(dt)
 
     function drawtiro(a)
 
-
         love.graphics.draw(tiro, shoot[a].x, shoot[a].y)
 
     end
@@ -818,13 +774,10 @@ function love.update(dt)
 
     if runner == 7 then
 
-
         if player.x <= 100 and player.y  >= -1000 then
 
             player.x = 100
-
             player.y = player.y
-
 
         end
 
@@ -840,16 +793,14 @@ function love.update(dt)
             
             end
 
-
             if checkCollision(player, v_colisao_a) then
 
                 player.y = nvy
 
             end
 
+
         end
-
-
     end
 
 
@@ -869,7 +820,6 @@ function love.update(dt)
             
             end
 
-
             if checkCollision(player, v_colisao_a) then
 
                 player.y = nvy
@@ -877,22 +827,14 @@ function love.update(dt)
             end
 
 
-
-
         end
-
     end
 
     nvx = player.x
     nvy = player.y
 
 
-
-
-
-
 end
-
 
 
 
@@ -908,13 +850,11 @@ end
 
 
 
-
 --Desenha na Tela:
 
 function love.draw()
 
   --Lógica de exibição tela inicial ---> jogo
-
     if runner == false then
         tela_inicial.initial(alfa)
     end
@@ -928,7 +868,6 @@ function love.draw()
   --Jogo rodando
 
     if runner == 7 then
-
 
     --Tamanho da tela
 
@@ -946,7 +885,8 @@ function love.draw()
 
         )
 
-
+    
+    --Gera Cenário e colisão
 
         drawed.draw(grama, mapa, v_tiles, h_tiles, tile_width, tile_height, left_corner)
 
@@ -988,13 +928,10 @@ function love.draw()
 
 
 
-
     if a > 0 then
 
         for u=1, a ,1 do
-
             drawtiro(u)
-
         end
 
     end
@@ -1003,7 +940,6 @@ function love.draw()
     --Gera Personagem
 
         love.graphics.draw(player.sprite, player.x, player.y, math.rad(0), 1, 1, player.sprite:getWidth()/2, player.sprite:getHeight()/2)
-
 
 
     --Executa
@@ -1044,7 +980,6 @@ function love.draw()
 
 
 
-
      --Slot de arma
 
         love.graphics.setColor(0.5, 0.5, 0.5)
@@ -1052,7 +987,6 @@ function love.draw()
 
         love.graphics.setColor(0, 0, 0)
         love.graphics.rectangle("fill", 54, 804, 142, 142, 6, 6)
-
 
 
 
@@ -1080,13 +1014,10 @@ function love.draw()
 
 
 
-
-
-
       --Reseta cores
         love.graphics.setColor(1,1,1)
 
     end
 
-
+    
 end
