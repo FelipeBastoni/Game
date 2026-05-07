@@ -18,44 +18,44 @@ function love.load()
   --player
 
     p_default = {
-        love.graphics.newImage("primeofc.png"), 
-        love.graphics.newImage("primeofcesq.png"),
-        love.graphics.newImage("primedownf.png"),
-        love.graphics.newImage("primeup.png")
+        love.graphics.newImage("jogador/primeofc.png"), 
+        love.graphics.newImage("jogador/primeofcesq.png"),
+        love.graphics.newImage("jogador/primedownf.png"),
+        love.graphics.newImage("jogador/primeup.png")
 
     }
 
     p_right = {
-        love.graphics.newImage("primestp1.png"),
-        love.graphics.newImage("primestp2.png")
+        love.graphics.newImage("jogador/primestp1.png"),
+        love.graphics.newImage("jogador/primestp2.png")
 
     }
 
     p_left = {
-        love.graphics.newImage("primestp1esq.png"),
-        love.graphics.newImage("primestp2esq.png")
+        love.graphics.newImage("jogador/primestp1esq.png"),
+        love.graphics.newImage("jogador/primestp2esq.png")
     
     }
 
     p_up = {
-        love.graphics.newImage("primeupstep1.png"), 
-        love.graphics.newImage("primeupstep2.png") 
+        love.graphics.newImage("jogador/primeupstep1.png"), 
+        love.graphics.newImage("jogador/primeupstep2.png") 
 
     }
 
     p_down = {
-        love.graphics.newImage("primedownstep1.png"), 
-        love.graphics.newImage("primedownstep2.png"), 
+        love.graphics.newImage("jogador/primedownstep1.png"), 
+        love.graphics.newImage("jogador/primedownstep2.png"), 
 
     }
 
 
   --Imagens do Cenário
 
-    grama = love.graphics.newImage("grama.png")
-    stone = love.graphics.newImage("grama.png")
-    sky = love.graphics.newImage("grama.png")
-    tiro = love.graphics.newImage("zumbi.png")
+    grama = love.graphics.newImage("cenario/grama.png")
+    stone = love.graphics.newImage("cenario/grama.png")
+    sky = love.graphics.newImage("cenario/grama.png")
+    tiro = love.graphics.newImage("inimigos/zumbi.png")
 
 
 
@@ -1019,5 +1019,5 @@ function love.draw()
 
     end
 
-    
+
 end
