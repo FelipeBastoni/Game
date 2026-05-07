@@ -1,8 +1,7 @@
 
 local l_mapa = require("l_mapa")
 local tela_inicial = require("tela_inicial")
-
-
+local drawed = require("drawed")
 
 --Configurações para conectar ao servidor
 
@@ -158,12 +157,11 @@ function love.load()
   --Posição do personagem
     position = ""
 
- --Alfa da animação da tela inicial
+  --Alfa da tela inicial
     alfa = 0.5
-    
- --Timer da animação da Tela inicial
-    cut_timer = 1
 
+  --Timer da animação da tela incial
+    cut_timer = 1
 
 
  --Colisão
@@ -253,19 +251,40 @@ end
 
 
 
---Messager (envio de dados (cliente --> Servidor))
+--Função de conexão
 
-function messager(sentido, x, y, vida, id)
+function conn()
 
-    if not peer then
-        return
+    while true do
+        
+        local event = host:service(0)
+        if not event then break end
+
+     --Quando temos resposta do servidor
+
+        if event then
+
+         --checa conexão
+
+            if event.type == "connect" then        
+                print("Conectado ao servidor!")
+
+                peer = event.peer
+
+
+            elseif event.type == "receive" then
+
+                --forma o array com dados recebidos
+                update(event.data)
+
+
+            elseif event.type == "disconnect" then
+                print("Desconectado")
+            end
+
+
+        end
     end
-
-    local msg = ""..sentido..";"..x..";"..y..";"..vida..";"..id..";"
-
-    peer:send(msg, 0, "unreliable")
-    host:flush()
-
 end
 
 
@@ -286,6 +305,10 @@ function update(xt)
 end
 
 
+
+
+--Função de processamento de pacote
+
 function processPacket(t)
 
 --Quando Resposta:
@@ -303,7 +326,6 @@ function processPacket(t)
         party[id].x = 0
         party[id].y = 0
         party[id].speed = 0
-        -- party[id].position = "love.graphics.newImage("nome padronizado..t[4]..".png"")"
         party[id].sprite = p_default[3]
         party[id].id = id
 
@@ -494,45 +516,22 @@ end
 
 
 
+--Messager (envio de dados (cliente --> Servidor))
 
+function messager(sentido, x, y, vida, id)
 
-
-
-
-
-function conn()
-
-    while true do
-        
-        local event = host:service(0)
-        if not event then break end
-
-     --Quando temos resposta do servidor
-
-        if event then
-
-         --checa conexão
-
-            if event.type == "connect" then        
-                print("Conectado ao servidor!")
-
-                peer = event.peer
-
-
-            elseif event.type == "receive" then
-
-                --forma o array com dados recebidos
-                update(event.data)
-
-
-            elseif event.type == "disconnect" then
-                print("Desconectado")
-            end
-
-
-        end
+    if not peer then
+        return
     end
+
+    local msg = ""..sentido..";"..x..";"..y..";"..vida..";"..id..";"
+
+    peer:send(msg, 0, "unreliable")
+    host:flush()
+
 end
+
+
 
 
 
@@ -548,27 +547,14 @@ function love.update(dt)
     reg_timer = reg_timer + dt
 
 
+
   --Animação tela inicial
 
     if runner == false then
-        if alfa < 1 and cut_timer == 1 then
-            alfa = alfa + (dt/4)
-        end
-        if alfa >= 1 then 
-            cut_timer = 2
-        end
-        if cut_timer == 2 then
-            alfa = alfa - (dt/4)
-        end
-        if alfa <= 0.5 then
-            cut_timer = 1
-        end
-        if love.keyboard.isDown("space") then
-            alfa = 0
-            runner = true
-        end
-    end
 
+        alfa, cut_timer, runner = tela_inicial.anim(dt, alfa, cut_timer)
+
+    end
 
 
 
@@ -630,77 +616,66 @@ function love.update(dt)
 
         vy = 1
 
-        --Animação do Personagem
-        if step > 0.25 then
-            player.sprite = p_up[2]
-
-            if step > 0.5 then
-                step = 0
-            end
-        end
+        wait(p_up[2])
 
         player.position = "U"
 
     end
 
     if love.keyboard.isDown("s") then
+
         player.y = player.y + player.speed * dt
         player.sprite = p_down[1]
-
         vy = -1
 
-
-        if step > 0.25 then
-            player.sprite = p_down[2]
-
-            if step > 0.5 then
-                step = 0
-            end
-        end
+        wait(p_down[2])
 
         player.position = "S"
 
     end
 
     if love.keyboard.isDown("a") then
+
         player.x = player.x - player.speed * dt
         player.sprite = p_left[1]
-
         vx = 1
 
-
-        if step > 0.25 then
-            player.sprite = p_left[2]
-
-            if step > 0.5 then
-                step = 0
-            end
-        end
+        wait(p_left[2])
 
         player.position = "E"
 
     end
 
     if love.keyboard.isDown("d") then
+
         player.x = player.x + player.speed * dt
         player.sprite = p_right[1]
-
         vx = -1
 
-
-        if step > 0.25 then
-            player.sprite = p_right[2]
-
-            if step > 0.5 then
-                step = 0
-            end
-        end
+        wait(p_right[2])
 
         player.position = "D"
 
     end
 
 
+
+    function wait(sprite)
+
+        if step > 0.25 then
+            player.sprite = sprite
+
+            if step > 0.5 then
+                step = 0
+            end
+
+        end
+
+    end
+
+
+
+    
   --Correr com Shift
 
     if love.keyboard.isDown("lshift") then
@@ -858,7 +833,6 @@ function love.update(dt)
             
             v_colisao_a = co_mun[j]
 
-            print(j)
 
             if checkCollision(player, v_colisao_a) == true then
 
@@ -888,7 +862,6 @@ function love.update(dt)
             
             v_colisao_a = inimigo[j]
 
-            print(j)
 
             if checkCollision(player, v_colisao_a) == true then
 
@@ -974,29 +947,8 @@ function love.draw()
         )
 
 
-    --Gerador de Cenário
 
-    for i = 1, v_tiles, 1 do
-        for j = left_corner, h_tiles, 1 do
-            if (mapa[i][j] == "T") then
-
-
-                table.insert(co_mun, {
-
-                x = (j-left_corner)*tile_height,
-                y = (i-1)*tile_width})
-
-
-
-                love.graphics.draw(grama, ((j-left_corner)*tile_height), ((i-1)*tile_width))
-            elseif (mapa[i][j] == "G") then
-                love.graphics.draw(grama, ((j-left_corner)*tile_height), ((i-1)*tile_width))
-            elseif (mapa[i][j] == "P") then
-                love.graphics.draw(stone, ((j-left_corner)*tile_height), ((i-1)*tile_width))
-            end
-        end
-    end
-
+        drawed.draw(grama, mapa, v_tiles, h_tiles, tile_width, tile_height, left_corner)
 
 
     -- Array da party
@@ -1137,9 +1089,4 @@ function love.draw()
     end
 
 
-
 end
-
-
-
-
