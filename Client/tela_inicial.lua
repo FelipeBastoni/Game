@@ -6,7 +6,7 @@ local tela_inicial = {}
 function tela_inicial.initial(alfa)
 
   --Define o fundo
-    fundo = love.graphics.newImage("AAA.png")
+    fundo = love.graphics.newImage("telas/AAA.png")
 
   --Define a fonte
     fonte = love.graphics.newFont(25)
