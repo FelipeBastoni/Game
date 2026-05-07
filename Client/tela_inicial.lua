@@ -26,6 +26,37 @@ function tela_inicial.initial(alfa)
 end
 
 
+
+function tela_inicial.anim(dt, alfa, cut_timer)
+
+    local runner = false
+
+    if alfa < 1 and cut_timer == 1 then
+        alfa = alfa + (dt/4)
+    end
+    if alfa >= 1 then 
+        cut_timer = 2
+    end
+    if cut_timer == 2 then
+        alfa = alfa - (dt/4)
+    end
+    if alfa <= 0.5 then
+        cut_timer = 1
+    end
+    if love.keyboard.isDown("space") then
+        alfa = 0
+        runner = true
+    end
+
+    return alfa, cut_timer, runner
+
+end
+
+
+
+
+
+
 --Limpa a tela inicial
 
 function tela_inicial.start()
