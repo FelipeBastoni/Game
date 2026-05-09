@@ -11,7 +11,6 @@ function messager(peer, sentido, x, y, speed, id)
     local msg = ""..sentido..";"..x..";"..y..";"..speed..";"..id..";"
 
     peer:send(msg, 0, "unreliable")
-    host:flush()
 
 end
 
@@ -26,7 +25,6 @@ function messager_all(sentido, x, y, speed, id)
         peer = ids[n]
 
         peer:send(msg, 0, "unreliable")
-        host:flush()
 
     end
     
@@ -45,7 +43,6 @@ function messager_all_minus(fonte, sentido, x, y, speed, id)
         if peer ~= fonte then 
 
             peer:send(msg, 0, "unreliable")
-            host:flush()
 
         end
 
@@ -93,14 +90,24 @@ function love.load()
   --Array dos inimigos
     inimigo = {}
 
+  --Array dos inimigos
+    item = {}
+
   --Indexador dos inimigos
     i = 0
     x = 0
     y = 0
 
+  --Indexador de item
+    it = 0
+
   --Time step para uso do servidor
     ruler = 0
 
+
+
+    tempo = 0
+    vezes = 0
 
 end
 
@@ -108,7 +115,6 @@ end
 
 
 --Processos por Frame
-
 function love.update(dt)
 
     timer = timer + dt
@@ -178,12 +184,8 @@ function love.update(dt)
 
                     --Limita a cerca de 24+ envios por segundo
         if timer >= 0.042 and id ~= 0 then
-
             messager_all_minus(event.peer, "loadp", t[2], t[3], t[1], id)
             timer = 0
-
-            print("mandei")
-
         end
 
 
@@ -194,16 +196,11 @@ function love.update(dt)
 
 --Spawn 
 
- 
+  --Inimigos
     
     if love.keyboard.isDown("n") and ruler >= 0.75 then
 
         i = i + 1
-        x = x + 50
-        y = y + 10 
-
-
-
 
     --Cria Inimigos
 
@@ -222,13 +219,14 @@ function love.update(dt)
 
 
     end
-
-
     
   --Envia dados dos inimigos
 
    --Se tem inimigo
     if i > 0 then
+
+        tempo = tempo + dt
+
 
         if timer_i >= 0.042 then
 
@@ -237,15 +235,47 @@ function love.update(dt)
                 inimigo[v].x = inimigo[v].x + 10
 
                 messager_all("loadi", inimigo[v].x, inimigo[v].y, 0, v)
-                print(v.." no x: "..inimigo[v].x)
+                --print(v.." no x: "..inimigo[v].x)
 
                 timer_i = 0
+
+                vezes = vezes + 1
+
+                print("foi enviado: "..vezes)
+                print("em um tempo de : "..tempo)
+
+                host:flush()
+
 
             end
 
         end
 
     end
+
+  --Cria item
+      
+  
+    if love.keyboard.isDown("i") and ruler >= 0.75 then
+
+        it = it + 1
+
+        item[it] = {}
+        item[it].x = 50 
+        item[it].y = 100
+        item[it].tipo = ""
+        item[it].id = it
+
+        print("Cridado Item " ..it)
+
+        messager_all("newu", item[it].x, item[it].y, 0, it)
+
+        ruler = 0
+
+    end
+
+
+
 
 
 end
