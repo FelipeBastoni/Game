@@ -18,7 +18,7 @@ function love.load()
   --player
 
     p_default = {
-        love.graphics.newImage("jogador/primeofc.png"), 
+        love.graphics.newImage("jogador/coliplay.png"), 
         love.graphics.newImage("jogador/primeofcesq.png"),
         love.graphics.newImage("jogador/primedownf.png"),
         love.graphics.newImage("jogador/primeup.png")
@@ -53,6 +53,7 @@ function love.load()
   --Imagens do Cenário
 
     grama = love.graphics.newImage("cenario/grama.png")
+    coli = love.graphics.newImage("cenario/coli.png")
     stone = love.graphics.newImage("cenario/grama.png")
     sky = love.graphics.newImage("cenario/grama.png")
     tiro = love.graphics.newImage("inimigos/zumbi.png")
@@ -92,6 +93,8 @@ function love.load()
     player = {}
     player.x = 300
     player.y = 200
+    player.w = 96
+    player.h = 96
     player.speed = 450  
     player.position = "D"
     player.sprite = p_default[1]
@@ -115,6 +118,8 @@ function love.load()
     inimigo[idi] = {}
     inimigo[idi].x = 200
     inimigo[idi].y = 200
+    inimigo[idi].w = 96
+    inimigo[idi].h = 96
     inimigo[idi].speed = 450
     inimigo[idi].position = ""
     inimigo[idi].sprite = p_default[3]
@@ -380,6 +385,8 @@ function processPacket(t)
         inimigo[idip] = {}
         inimigo[idip].x = t[2]
         inimigo[idip].y = 0
+        inimigo[idip].w = 96
+        inimigo[idip].h = 96
         inimigo[idip].speed = 0
         inimigo[idip].position = ""
         inimigo[idip].sprite = tiro
@@ -840,11 +847,11 @@ end
 
 function checkCollision(a, b)
 
-    return tonumber(a.x) < tonumber(b.x) + 96 and 
-           tonumber(a.x) + 96 > tonumber(b.x) and
+    return tonumber(a.x) < tonumber(b.x) + b.w and 
+           tonumber(a.x) + a.w > tonumber(b.x) and
        
-           tonumber(a.y) < tonumber(b.y) + 96 and
-           tonumber(a.y) + 96 > tonumber(b.y)
+           tonumber(a.y) < tonumber(b.y) + b.h and
+           tonumber(a.y) + a.h > tonumber(b.y)
 
 end
 
@@ -939,7 +946,7 @@ function love.draw()
     
     --Gera Personagem
 
-        love.graphics.draw(player.sprite, player.x, player.y, math.rad(0), 1, 1, player.sprite:getWidth()/2, player.sprite:getHeight()/2)
+        love.graphics.draw(player.sprite, player.x, player.y)
 
 
     --Executa
