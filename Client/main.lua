@@ -54,6 +54,12 @@ function love.load()
 
     grama = love.graphics.newImage("cenario/grama.png")
     coli = love.graphics.newImage("cenario/coli.png")
+
+    noth = love.graphics.newImage("cenario/noth.png")
+    parede = love.graphics.newImage("cenario/parede.png")
+    
+
+    
     stone = love.graphics.newImage("cenario/grama.png")
     sky = love.graphics.newImage("cenario/grama.png")
     tiro = love.graphics.newImage("inimigos/zumbi.png")
@@ -228,6 +234,7 @@ function love.load()
 
   --Array para procesamento do mapa
     mapa = {}
+    soft = {}
 
   --Altura da imagem (tile)
     tile_height = 192
@@ -236,10 +243,12 @@ function love.load()
     tile_width  = 192 
 
   --Numero de imagens (tiles) na horizontal
-    h_tiles = 0       
+    h_tiles = 0  
+    sh_tiles = 0     
 
   --Numero de imagens (tiles) na vertical
     v_tiles = 0      
+    sv_tiles = 0 
 
   --Ponto esquerdo do cenário que será apresentado
     left_corner = 1 
@@ -248,6 +257,8 @@ function love.load()
 
  --Carrega o Cenário
     mapa, h_tiles, v_tiles = l_mapa.LoadMap("mapa.txt") 
+
+    soft, sh_tiles, sv_tiles = l_mapa.Loadsoft("soft.txt")
 
 end
 
@@ -896,6 +907,12 @@ function love.draw()
     --Gera Cenário e colisão
 
         drawed.draw(grama, mapa, v_tiles, h_tiles, tile_width, tile_height, left_corner)
+
+
+    --Gera cenário "Soft" e colisão
+
+        drawed.draw_soft(noth, parede, soft, sv_tiles, sh_tiles, 32, 32, left_corner)
+
 
 
     -- Array da party
