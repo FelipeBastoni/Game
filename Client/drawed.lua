@@ -1,6 +1,6 @@
 
 
---Gera Cenário e colisão do Cenário
+--Gera Cenário e parte da colisão do Cenário
 
 
 local drawed = {}

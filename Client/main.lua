@@ -18,7 +18,7 @@ function love.load()
   --player
 
     p_default = {
-        love.graphics.newImage("jogador/coliplay.png"), 
+        love.graphics.newImage("jogador/primeofc.png"), 
         love.graphics.newImage("jogador/primeofcesq.png"),
         love.graphics.newImage("jogador/primedownf.png"),
         love.graphics.newImage("jogador/primeup.png")
@@ -62,7 +62,7 @@ function love.load()
     
     stone = love.graphics.newImage("cenario/grama.png")
     sky = love.graphics.newImage("cenario/grama.png")
-    tiro = love.graphics.newImage("inimigos/zumbi.png")
+    tiro = love.graphics.newImage("inimigos/tiro.png")
 
 
 
@@ -99,9 +99,9 @@ function love.load()
     player = {}
     player.x = 300
     player.y = 200
-    player.w = 96
-    player.h = 96
-    player.speed = 450  
+    player.w = 145
+    player.h = 170
+    player.speed = 1500  
     player.position = "D"
     player.sprite = p_default[1]
 
@@ -142,6 +142,10 @@ function love.load()
     item[idi].sprite = tiro
     item[idi].id = idi
 
+  --Inventário
+
+    inventario_arma = {}
+    inventario_vida = {}
 
 
  --Executor do jogo
@@ -419,7 +423,9 @@ function processPacket(t)
         item[idip] = {}
         item[idip].x = t[2]
         item[idip].y = t[3]
-        item[idip].tipo = ""
+        item[idip].w = 120
+        item[idip].h = 120
+        item[idip].tipo = "vida"
         item[idip].id = idip
         item[idip].sprite = tiro
 
@@ -544,6 +550,12 @@ function love.update(dt)
     reg_timer = reg_timer + dt
 
 
+    mira_x = (mx + player.x + player.w/2) - love.graphics.getWidth()/2
+    mira_y = (my + player.y + player.w) - love.graphics.getHeight()/2
+
+    mira_ang = math.atan2((mira_y - (player.y + player.h/2)), (mira_x - player.x))
+
+
   --Animação tela inicial
 
     if runner == false then
@@ -577,7 +589,7 @@ function love.update(dt)
 
   --Define Sprite por posição do mouse
     mx = love.mouse.getX()
-    my = love.mouse.getY()
+    my = love.mouse.getY() 
 
 
     if mx > 960 then
@@ -664,7 +676,7 @@ function love.update(dt)
   --Correr com Shift
     if love.keyboard.isDown("lshift") then
 
-        player.speed = 750
+        player.speed = 2000
         braltura_s = 14
         brx_s = 36
         bry_s = 16
@@ -676,7 +688,7 @@ function love.update(dt)
        
         else 
 
-            player.speed = 450
+            player.speed = 1500
             braltura_s = 0
             brx_s = 0
             bry_s = 0
@@ -686,7 +698,7 @@ function love.update(dt)
     
     else 
         
-        player.speed = 450
+        player.speed = 1500
 
         if tamanho_s <= 243 then
 
@@ -747,10 +759,10 @@ function love.update(dt)
 
         a = a + 1
 
-        tx = mx
-        ty = my
+        tx = mira_x
+        ty = mira_y
 
-        ger_tiro(tx, ty, a)
+        ger_tiro(tx, ty, mira_ang, a)
 
     end
 
@@ -758,14 +770,13 @@ function love.update(dt)
 
   --Disparos
 
-    function ger_tiro(tx, ty, a)
+    function ger_tiro(tx, ty, mira_ang, a)
 
         shoot[a] = {}
-        shoot[a].x = tx
-        shoot[a].y = ty
+        shoot[a].x = player.x + (player.w/2)
+        shoot[a].y = player.y + (player.h/2)
+        shoot[a].ang = mira_ang
         shoot[a].id = a
-
-        print(shoot[a].id)
 
         drawtiro(a)
 
@@ -773,7 +784,10 @@ function love.update(dt)
 
     function drawtiro(a)
 
-        love.graphics.draw(tiro, shoot[a].x, shoot[a].y)
+        shoot[a].x = shoot[a].x + math.cos(shoot[a].ang) * 10
+        shoot[a].y = shoot[a].y + math.sin(shoot[a].ang) * 10 
+
+        love.graphics.draw(tiro, shoot[a].x, shoot[a].y, shoot[a].ang)
 
     end
 
@@ -852,19 +866,83 @@ function love.update(dt)
     nvy = player.y
 
 
+
+    --Checa interação com item
+
+
+    
+    if runner == 7 and #item > 0 then
+
+        for pi=1, #item, 1 do
+            
+            v_colisao_a = item[pi]
+
+
+            if checkItem(player, v_colisao_a) == true then
+                if checkItem(player, v_colisao_a) then
+
+                    if love.keyboard.isDown("e") then 
+
+                        if item[pi].tipo == "vida" and #inventario_vida < 5 then
+
+                            table.insert(inventario_vida, item[pi])
+
+                            print("pegou o item"..item[pi].id)            
+                            
+
+                        elseif item[pi].tipo == "arma" and #inventario_arma < 1 then
+                        
+                            table.insert(inventario_arma, item[pi])
+
+                            print("pegou o item"..item[pi].id)            
+
+
+                        end
+
+
+                    end
+
+                end
+
+
+            end
+
+        end
+    
+        
+
+    end
+
+
+
+
 end
 
 
 
 function checkCollision(a, b)
 
-    return tonumber(a.x) < tonumber(b.x) + b.w and 
-           tonumber(a.x) + a.w > tonumber(b.x) and
+    return tonumber(a.x) + (tonumber(a.w)/3) < tonumber(b.x) + tonumber(b.w) and 
+           tonumber(a.x) + tonumber(a.w) > tonumber(b.x) and
        
-           tonumber(a.y) < tonumber(b.y) + b.h and
-           tonumber(a.y) + a.h > tonumber(b.y)
-
+           tonumber(a.y) < tonumber(b.y) + tonumber(b.h) and
+           tonumber(a.y) + tonumber(a.h) + 6 > tonumber(b.y)
 end
+
+
+function checkItem(a, b)
+
+    return tonumber(a.x) + tonumber(a.w/3) < tonumber(b.x) + tonumber(b.w) and 
+           tonumber(a.x) + tonumber(a.w) > tonumber(b.x) and
+       
+           tonumber(a.y) < tonumber(b.y) + tonumber(b.h) and
+           tonumber(a.y) + tonumber(a.h) > tonumber(b.y)
+end
+
+
+
+
+
 
 
 
@@ -898,8 +976,8 @@ function love.draw()
         love.graphics.push()
         love.graphics.translate(
 
-            -player.x + screenWidth/ 2,
-            -player.y + screenHeight / 2
+            -(player.x + player.w/2) + screenWidth/ 2,
+            -(player.y + player.w) + screenHeight / 2
 
         )
 
