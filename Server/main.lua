@@ -261,9 +261,9 @@ function love.update(dt)
         it = it + 1
 
         item[it] = {}
-        item[it].x = 50 
+        item[it].x = 150 * it
         item[it].y = 100
-        item[it].tipo = ""
+        item[it].tipo = "vida"
         item[it].id = it
 
         print("Cridado Item " ..it)
