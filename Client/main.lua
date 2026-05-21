@@ -67,6 +67,10 @@ function love.load()
     zumbi = love.graphics.newImage("inimigos/zumbi.png")
 
 
+    damage_timer = 0
+
+
+
  --Array's
 
   --Array de colisões do mapa
@@ -105,6 +109,7 @@ function love.load()
     player.speed = 1500  
     player.position = "D"
     player.sprite = p_default[1]
+    player.alive = true
 
 
   --Party (outros jogadores)
@@ -549,7 +554,7 @@ function love.update(dt)
     timer = timer + dt
     step = step + dt
     reg_timer = reg_timer + dt
-
+    damage_timer = damage_timer + dt
 
     mira_x = (mx + player.x + player.w/2) - love.graphics.getWidth()/2
     mira_y = (my + player.y + player.w) - love.graphics.getHeight()/2
@@ -861,6 +866,55 @@ function love.update(dt)
 
 
         end
+
+
+
+
+
+--Colisão do dano
+
+        for j=1, #inimigo, 1 do
+            
+            if damage_timer >= 2 then
+
+                v_colisao_a = inimigo[j]
+
+                if checkDamage(player, v_colisao_a) then
+                    
+                    if player.alive then
+
+                        if tamanho_d <= 0 then
+                            tamanho_v = tamanho_v - 1 
+                            damage_timer = 0
+
+                            if tamanho_v <= 0 then
+                                player.alive = false
+                            end
+
+                        end
+
+                        if tamanho_d > 0 then
+                            tamanho_d = tamanho_d - 1 
+                            damage_timer = 0
+
+                        end
+
+                    end
+
+
+                end
+
+
+
+
+            end
+
+
+        end
+
+        
+
+
     end
 
     nvx = player.x
@@ -941,6 +995,14 @@ function checkItem(a, b)
 end
 
 
+function checkDamage(a, b)
+
+    return tonumber(a.x) + tonumber(a.w/3) < tonumber(b.x) + tonumber(b.w) and 
+           tonumber(a.x) + tonumber(a.w) > tonumber(b.x) and
+       
+           tonumber(a.y) < tonumber(b.y) + tonumber(b.h) and
+           tonumber(a.y) + tonumber(a.h) > tonumber(b.y)
+end
 
 
 
