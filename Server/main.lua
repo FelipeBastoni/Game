@@ -90,6 +90,15 @@ function love.load()
   --Array dos inimigos
     inimigo = {}
 
+  --Array da Party
+    party = {}
+    party[np] = {}
+    party[np].x = 0
+    party[np].y = 0
+    party[np].vida = 0
+    party[np].id = np
+
+
   --Array dos inimigos
     item = {}
 
@@ -139,9 +148,14 @@ function love.update(dt)
                     
                 print("conectado", event.peer)
 
-
             --Atualiza número de Conexões
                 np = np + 1
+
+                party[np] = {}
+                party[np].x = 0
+                party[np].y = 0
+                party[np].vida = 0
+                party[np].id = np
 
             --Notifica peer para criar jogador (seu próprio)
                 messager(event.peer, "log", 0, 0, 0, np)                
@@ -172,6 +186,13 @@ function love.update(dt)
               --Pega o ID da conexão
                 id = tonumber(t[5])
 
+                if #party > 0 then
+
+                    party[id].x = t[2]
+                    party[id].y = t[3]
+
+                end
+
             end
 
 
@@ -186,6 +207,7 @@ function love.update(dt)
         if timer >= 0.042 and id ~= 0 then
             messager_all_minus(event.peer, "loadp", t[2], t[3], t[1], id)
             timer = 0
+
         end
 
 
@@ -210,6 +232,7 @@ function love.update(dt)
         inimigo[i].position = ""
         inimigo[i].tipo = ""
         inimigo[i].vida = 0
+        inimigo[i].segue = sorteia()
 
         print("Criado" ..i)
 
@@ -231,18 +254,37 @@ function love.update(dt)
         if timer_i >= 0.042 then
 
             for v=1, i, 1 do
-                --Desloca o inimigo
-                inimigo[v].x = inimigo[v].x + 10
+
+                -- Inteligência dos inimigos
+
+                alvo = inimigo[i].segue
+
+                if party[alvo] then
+
+                dx = party[alvo].x - inimigo[i].x + 64
+                dy = party[alvo].y - inimigo[i].y + 64
+
+                dist = math.sqrt(dx*dx + dy*dy)
+
+                    if dist > 0 then
+
+                        dx = dx / dist
+                        dy = dy / dist
+
+                        inimigo[i].x = inimigo[i].x + dx * 450 * dt
+                        inimigo[i].y = inimigo[i].y + dy * 450 * dt
+
+                    end
+
+                end
+
+
+
+                inimigo[v].x = inimigo[v].x
 
                 messager_all("loadi", inimigo[v].x, inimigo[v].y, 0, v)
-                --print(v.." no x: "..inimigo[v].x)
 
                 timer_i = 0
-
-                vezes = vezes + 1
-
-                print("foi enviado: "..vezes)
-                print("em um tempo de : "..tempo)
 
                 host:flush()
 
@@ -251,7 +293,25 @@ function love.update(dt)
 
         end
 
+
+
+
+
+
+
+
+
+
     end
+
+
+
+
+
+
+
+
+
 
   --Cria item
       
@@ -276,6 +336,45 @@ function love.update(dt)
 
 
 
+
+
+end
+
+
+
+function checkCollision(a, b)
+
+    return tonumber(a.x) + (tonumber(a.w)/3) < tonumber(b.x) + tonumber(b.w) and 
+           tonumber(a.x) + tonumber(a.w) > tonumber(b.x) and
+       
+           tonumber(a.y) < tonumber(b.y) + tonumber(b.h) and
+           tonumber(a.y) + tonumber(a.h) + 6 > tonumber(b.y)
+end
+
+
+
+
+function sorteia()
+    n = #party
+    sort = math.random(1, n)
+    return sort
+end
+
+
+function love.draw()
+
+    if #party > 0 then
+
+        msg1 = tostring(party[id].id)
+        msg2 = tostring(party[id].x)
+        msg3 = tostring(party[id].y)
+
+        msg = "ID:".. msg1 ..", X:".. msg2 ..", Y:".. msg3
+
+        love.graphics.print(msg, 100, 50 * id)
+
+
+    end
 
 
 end
