@@ -1060,7 +1060,7 @@ function love.draw()
 
     for n=1, #jogadores, 1 do
         infa = jogadores[n]
-        love.graphics.draw(party[infa].sprite, party[infa].x, party[infa].y, 0, 1, 1, party[infa].sprite:getWidth()/2, party[infa].sprite:getHeight()/2)
+        love.graphics.draw(party[infa].sprite, party[infa].x, party[infa].y)
     end
 
 
