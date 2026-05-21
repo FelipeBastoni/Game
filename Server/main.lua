@@ -342,6 +342,7 @@ end
 
 
 
+
 function checkCollision(a, b)
 
     return tonumber(a.x) + (tonumber(a.w)/3) < tonumber(b.x) + tonumber(b.w) and 
