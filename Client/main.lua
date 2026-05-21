@@ -62,8 +62,9 @@ function love.load()
     
     stone = love.graphics.newImage("cenario/grama.png")
     sky = love.graphics.newImage("cenario/grama.png")
+    
     tiro = love.graphics.newImage("inimigos/tiro.png")
-
+    zumbi = love.graphics.newImage("inimigos/zumbi.png")
 
 
  --Array's
@@ -404,7 +405,7 @@ function processPacket(t)
         inimigo[idip].h = 96
         inimigo[idip].speed = 0
         inimigo[idip].position = ""
-        inimigo[idip].sprite = tiro
+        inimigo[idip].sprite = zumbi
         inimigo[idip].id = idip
 
         table.insert(inimigos, idip)
@@ -502,17 +503,17 @@ function processPacket(t)
                 y = 0,
                 speed = 0,
                 position = "",
-                sprite = tiro,
+                sprite = zumbi,
                 id = idip
             }
 
         end
 
         inimigo[idip].x = t[2]
-        inimigo[idip].y = 0
+        inimigo[idip].y = t[3]
         inimigo[idip].speed = 0
         inimigo[idip].position = ""
-        inimigo[idip].sprite = tiro
+        inimigo[idip].sprite = zumbi
         inimigo[idip].id = idip
 
     end
