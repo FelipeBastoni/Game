@@ -257,12 +257,12 @@ function love.update(dt)
 
                 -- Inteligência dos inimigos
 
-                alvo = inimigo[i].segue
+                alvo = inimigo[v].segue
 
                 if party[alvo] then
 
-                dx = party[alvo].x - inimigo[i].x + 64
-                dy = party[alvo].y - inimigo[i].y + 64
+                dx = party[alvo].x - inimigo[v].x + 64
+                dy = party[alvo].y - inimigo[v].y + 64
 
                 dist = math.sqrt(dx*dx + dy*dy)
 
@@ -271,8 +271,8 @@ function love.update(dt)
                         dx = dx / dist
                         dy = dy / dist
 
-                        inimigo[i].x = inimigo[i].x + dx * 450 * dt
-                        inimigo[i].y = inimigo[i].y + dy * 450 * dt
+                        inimigo[v].x = inimigo[v].x + dx * 450 * dt
+                        inimigo[v].y = inimigo[v].y + dy * 450 * dt
 
                     end
 
