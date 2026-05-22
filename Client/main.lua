@@ -781,6 +781,8 @@ function love.update(dt)
         shoot[a] = {}
         shoot[a].x = player.x + (player.w/2)
         shoot[a].y = player.y + (player.h/2)
+        shoot[a].w = 5
+        shoot[a].h = 5
         shoot[a].ang = mira_ang
         shoot[a].id = a
 
@@ -901,18 +903,32 @@ function love.update(dt)
 
                     end
 
-
                 end
 
-
-
-
             end
-
 
         end
 
         
+        if #shoot > 0 and #inimigo > 0 then
+
+            for r=1, #shoot, 1 do
+                for t=1, #inimigo, 1 do 
+
+                    if checkTiro(inimigo[t], shoot[r]) then
+
+                        tamanho_s = 0
+
+                    end
+
+                end            
+            end
+
+        end
+
+
+
+    
 
 
     end
@@ -1005,6 +1021,14 @@ function checkDamage(a, b)
 end
 
 
+function checkTiro(a, b)
+
+    return tonumber(a.x) + tonumber(a.w/3) < tonumber(b.x) + tonumber(b.w) and 
+           tonumber(a.x) + tonumber(a.w) > tonumber(b.x) and
+       
+           tonumber(a.y) < tonumber(b.y) + tonumber(b.h) and
+           tonumber(a.y) + tonumber(a.h) > tonumber(b.y)
+end
 
 
 
