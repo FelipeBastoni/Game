@@ -160,11 +160,11 @@ end
 
 function checkCollision(a, b)
 
-    return tonumber(a.x) + (tonumber(a.w)/3) < tonumber(b.x) + tonumber(b.w) and 
-           tonumber(a.x) + tonumber(a.w) > tonumber(b.x) and
+    return tonumber(a.x) + (tonumber(a.w)/3) - 80 < tonumber(b.x) + tonumber(b.w) and 
+           tonumber(a.x) + tonumber(a.w) > tonumber(b.x) + 75 and
        
            tonumber(a.y) < tonumber(b.y) + tonumber(b.h) and
-           tonumber(a.y) + tonumber(a.h) + 14 > tonumber(b.y)
+           tonumber(a.y) + tonumber(a.h) - 75 > tonumber(b.y)
 end
 
 
@@ -438,19 +438,6 @@ function love.update(dt)
 
 
 end
-
-
-
-
-function checkCollision(a, b)
-
-    return tonumber(a.x) + (tonumber(a.w)/2) < tonumber(b.x) + tonumber(b.w) and 
-           tonumber(a.x) + tonumber(a.w) > tonumber(b.x) and
-       
-           tonumber(a.y) < tonumber(b.y) + tonumber(b.h) and
-           tonumber(a.y) + tonumber(a.h) - 50 > tonumber(b.y)
-end
-
 
 
 
