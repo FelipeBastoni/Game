@@ -1,3 +1,6 @@
+local drawed = require("drawed")
+local l_mapa = require("l_mapa")
+
 
 local enet = require("enet")
 --Cria Servidor
@@ -118,13 +121,102 @@ function love.load()
     tempo = 0
     vezes = 0
 
+
+
+ --Variáveis do cenário
+
+  --Array para procesamento do mapa
+    mapa = {}
+    soft = {}
+
+  --Altura da imagem (tile)
+    tile_height = 192
+
+  --Largura da imagem (tile)
+    tile_width  = 192 
+
+  --Numero de imagens (tiles) na horizontal
+    h_tiles = 0  
+    sh_tiles = 0     
+
+  --Numero de imagens (tiles) na vertical
+    v_tiles = 0      
+    sv_tiles = 0 
+
+  --Ponto esquerdo do cenário que será apresentado
+    left_corner = 1 
+
+  --Array de colisões do mapa
+    co_mun = {}
+
+ --Carrega o Cenário
+    mapa, h_tiles, v_tiles = l_mapa.LoadMap("mapa.txt") 
+
+    soft, sh_tiles, sv_tiles = l_mapa.Loadsoft("soft.txt")
+
 end
+
+
+
+function checkCollision(a, b)
+
+    return tonumber(a.x) + (tonumber(a.w)/3) < tonumber(b.x) + tonumber(b.w) and 
+           tonumber(a.x) + tonumber(a.w) > tonumber(b.x) and
+       
+           tonumber(a.y) < tonumber(b.y) + tonumber(b.h) and
+           tonumber(a.y) + tonumber(a.h) + 14 > tonumber(b.y)
+end
+
 
 
 
 
 --Processos por Frame
 function love.update(dt)
+
+ 
+--Gera Cenário e colisão
+
+    drawed.draw(mapa, v_tiles, h_tiles, tile_width, tile_height, left_corner)
+
+
+--Gera cenário "Soft" e colisão
+
+    drawed.draw_soft(soft, sv_tiles, sh_tiles, 32, 32, left_corner)
+
+
+
+--Verifica a colisão
+
+    if #inimigo > 0 then
+
+        for j=1, #co_mun, 1 do
+
+            v_colisao_a = co_mun[j]
+
+            for r=1, #inimigo, 1 do
+
+                if checkCollision(inimigo[r], v_colisao_a) then
+
+                    inimigo[r].x = nvx
+
+                end
+
+                if checkCollision(inimigo[r], v_colisao_a) then
+
+                    inimigo[r].y = nvy
+
+                end
+
+
+            end
+                
+
+        end
+
+        
+    end
+
 
     timer = timer + dt
     ruler = ruler + dt
@@ -229,6 +321,8 @@ function love.update(dt)
         inimigo[i] = {}
         inimigo[i].x = x
         inimigo[i].y = y
+        inimigo[i].w = 145
+        inimigo[i].h = 174
         inimigo[i].position = ""
         inimigo[i].tipo = ""
         inimigo[i].vida = 0
@@ -256,6 +350,11 @@ function love.update(dt)
             for v=1, i, 1 do
 
                 -- Inteligência dos inimigos
+
+                -- posição para colisão
+
+                nvx = inimigo[v].x
+                nvy = inimigo[v].y
 
                 alvo = inimigo[v].segue
 
@@ -345,11 +444,11 @@ end
 
 function checkCollision(a, b)
 
-    return tonumber(a.x) + (tonumber(a.w)/3) < tonumber(b.x) + tonumber(b.w) and 
+    return tonumber(a.x) + (tonumber(a.w)/2) < tonumber(b.x) + tonumber(b.w) and 
            tonumber(a.x) + tonumber(a.w) > tonumber(b.x) and
        
            tonumber(a.y) < tonumber(b.y) + tonumber(b.h) and
-           tonumber(a.y) + tonumber(a.h) + 6 > tonumber(b.y)
+           tonumber(a.y) + tonumber(a.h) - 50 > tonumber(b.y)
 end
 
 
