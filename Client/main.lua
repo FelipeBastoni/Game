@@ -52,12 +52,17 @@ function love.load()
 
   --Imagens do Cenário
 
-    grama = love.graphics.newImage("cenario/grama.png")
+    grama = love.graphics.newImage("cenario/calcada.png")
     coli = love.graphics.newImage("cenario/coli.png")
+    rua = love.graphics.newImage("cenario/ruaed.png")
+    rua_esq = love.graphics.newImage("cenario/ruaedesq.png")
+
+
 
     noth = love.graphics.newImage("cenario/noth.png")
     parede = love.graphics.newImage("cenario/parede.png")
     
+
 
     
     stone = love.graphics.newImage("cenario/grama.png")
@@ -65,6 +70,7 @@ function love.load()
     
     tiro = love.graphics.newImage("inimigos/tiro.png")
     zumbi = love.graphics.newImage("inimigos/zumbi.png")
+
 
 
     damage_timer = 0
@@ -779,7 +785,7 @@ function love.update(dt)
     function ger_tiro(tx, ty, mira_ang, a)
 
         shoot[a] = {}
-        shoot[a].x = player.x + (player.w/2)
+        shoot[a].x = player.x + 100
         shoot[a].y = player.y + (player.h/2)
         shoot[a].w = 5
         shoot[a].h = 5
@@ -795,7 +801,7 @@ function love.update(dt)
         shoot[a].x = shoot[a].x + math.cos(shoot[a].ang) * 10
         shoot[a].y = shoot[a].y + math.sin(shoot[a].ang) * 10 
 
-        love.graphics.draw(tiro, shoot[a].x, shoot[a].y, shoot[a].ang)
+        love.graphics.draw(tiro, shoot[a].x, shoot[a].y, shoot[a].ang, 1, 1, tiro:getWidth()/2, tiro:getHeight()/2)
 
     end
 
@@ -1071,7 +1077,7 @@ function love.draw()
     
     --Gera Cenário e colisão
 
-        drawed.draw(grama, mapa, v_tiles, h_tiles, tile_width, tile_height, left_corner)
+        drawed.draw(coli ,grama, rua, rua_esq, mapa, v_tiles, h_tiles, tile_width, tile_height, left_corner)
 
 
     --Gera cenário "Soft" e colisão
