@@ -611,9 +611,9 @@ function love.update(dt)
     end
 
 
-    if mx >= (win_x/2)-40 and mx <= (win_x/2)+40 and my > (win_y/2)+40  then
+    if mx >= (win_x/2)-(win_x/14) and mx <= (win_x/2)+(win_x/14) and my > (win_y/2)+(win_y/12)  then
         player.position = "PS"
-    elseif mx >= (win_x/2)-40 and mx <= (win_x/2)+40 and my < (win_y/2)-40  then
+    elseif mx >= (win_x/2)-(win_x/14) and mx <= (win_x/2)+(win_x/14) and my < (win_y/2)-(win_y/12)  then
         player.position = "PU"
     end
 
@@ -833,18 +833,37 @@ function love.update(dt)
             v_colisao_a = co_mun[j]
 
 
-            if checkCollision(player, v_colisao_a) == true then
+                if win_x <= 1366 then    
 
-                player.x = nvx
-            
-            end
 
-            if checkCollision(player, v_colisao_a) then
+                    if checkCorr(player, v_colisao_a) == true then
 
-                player.y = nvy
+                        player.x = nvx
+                    
+                    end
 
-            end
+                    if checkCorr(player, v_colisao_a) then
 
+                        player.y = nvy
+
+                    end
+
+
+                else 
+
+                    if checkCollision(player, v_colisao_a) == true then
+
+                        player.x = nvx
+                    
+                    end
+
+                    if checkCollision(player, v_colisao_a) then
+
+                        player.y = nvy
+
+                    end
+
+                end
 
         end
     end
@@ -859,7 +878,6 @@ function love.update(dt)
             
             v_colisao_a = inimigo[j]
 
-
             if checkCollision(player, v_colisao_a) == true then
 
                 player.x = nvx
@@ -876,7 +894,7 @@ function love.update(dt)
         end
 
 
-
+        
 
 
 --Colisão do dano
@@ -1007,6 +1025,16 @@ function checkCollision(a, b)
 end
 
 
+function checkCorr(a, b)
+
+    return tonumber(a.x) + (tonumber(a.w)/3) < tonumber(b.x) + tonumber(b.w) and 
+           tonumber(a.x) + tonumber(a.w) > tonumber(b.x) + 40 and
+       
+           tonumber(a.y) < tonumber(b.y) + tonumber(b.h) and
+           tonumber(a.y) + tonumber(a.h) + 15 > tonumber(b.y) + 40
+end
+
+
 function checkItem(a, b)
 
     return tonumber(a.x) + tonumber(a.w/3) < tonumber(b.x) + tonumber(b.w) and 
@@ -1060,8 +1088,8 @@ function love.draw()
 
     --Tamanho da tela
 
-        local screenWidth = love.graphics.getWidth()
-        local screenHeight = love.graphics.getHeight()
+        local screenWidth = win_x
+        local screenHeight = win_y
 
 
     --Camera
@@ -1075,14 +1103,27 @@ function love.draw()
         )
 
     
+
+
+
+        if win_x <= 1366 then
+
+            conversor = 0.75
+
+        else
+
+            conversor = 1
+
+        end
+
     --Gera Cenário e colisão
 
-        drawed.draw(coli ,grama, rua, rua_esq, mapa, v_tiles, h_tiles, tile_width, tile_height, left_corner)
+        drawed.draw(coli ,grama, rua, rua_esq, mapa, v_tiles, h_tiles, tile_width, tile_height, left_corner, conversor)
 
 
     --Gera cenário "Soft" e colisão
 
-        drawed.draw_soft(noth, parede, soft, sv_tiles, sh_tiles, 32, 32, left_corner)
+        drawed.draw_soft(noth, parede, soft, sv_tiles, sh_tiles, 32, 32, left_corner, conversor)
 
 
 
@@ -1090,7 +1131,7 @@ function love.draw()
 
     for n=1, #jogadores, 1 do
         infa = jogadores[n]
-        love.graphics.draw(party[infa].sprite, party[infa].x, party[infa].y)
+        love.graphics.draw(party[infa].sprite, party[infa].x, party[infa].y, 0, conversor, conversor)
     end
 
 
@@ -1100,7 +1141,7 @@ function love.draw()
 
         for n=1, #inimigos, 1 do
             infa = inimigos[n]
-            love.graphics.draw(inimigo[infa].sprite, inimigo[infa].x, inimigo[infa].y, 0, 1, 1, inimigo[infa].sprite:getWidth()/2, inimigo[infa].sprite:getHeight()/2)
+            love.graphics.draw(inimigo[infa].sprite, inimigo[infa].x, inimigo[infa].y, 0, conversor, conversor, inimigo[infa].sprite:getWidth()/2, inimigo[infa].sprite:getHeight()/2)
         end
 
     end
@@ -1115,7 +1156,7 @@ function love.draw()
             ite = itens[n]
 
             love.graphics.setColor(1,1,1)
-            love.graphics.draw(item[ite].sprite, item[ite].x, item[ite].y)
+            love.graphics.draw(item[ite].sprite, item[ite].x, item[ite].y, 0, conversor, conversor)
 
         end
 
@@ -1134,7 +1175,7 @@ function love.draw()
     
     --Gera Personagem
 
-        love.graphics.draw(player.sprite, player.x, player.y)
+        love.graphics.draw(player.sprite, player.x, player.y, 0, conversor, conversor)
 
 
     --Executa
