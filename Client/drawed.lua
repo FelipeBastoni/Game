@@ -6,7 +6,7 @@
 local drawed = {}
 
 
-function drawed.draw(grama, mapa, v_tiles, h_tiles, tile_width, tile_height, left_corner)
+function drawed.draw(coli ,grama, rua, rua_esq, mapa, v_tiles, h_tiles, tile_width, tile_height, left_corner, conversor)
 
     for i = 1, v_tiles, 1 do
         for j = 1, h_tiles, 1 do
@@ -23,10 +23,15 @@ function drawed.draw(grama, mapa, v_tiles, h_tiles, tile_width, tile_height, lef
 
 
                 love.graphics.draw(coli, (j*tile_height), (i*tile_width))
-            elseif (mapa[i][j] == "G") then
+            elseif (mapa[i][j] == "E") then
+                love.graphics.draw(rua_esq, (j*tile_height), (i*tile_width))
+            
+            elseif (mapa[i][j] == "D") then
+                love.graphics.draw(rua, (j*tile_height), (i*tile_width))
+    
+            elseif (mapa[i][j] == "G") then           
                 love.graphics.draw(grama, (j*tile_height), (i*tile_width))
-            elseif (mapa[i][j] == "P") then
-                love.graphics.draw(stone, (j*tile_height), (i*tile_width))
+            
             end
         end
     end
@@ -37,7 +42,7 @@ end
 
 
 
-function drawed.draw_soft(noth, parede, soft, v_tiles, h_tiles, tile_width, tile_height, left_corner)
+function drawed.draw_soft(noth, parede, soft, v_tiles, h_tiles, tile_width, tile_height, left_corner, conversor)
 
     for i = 1, v_tiles, 1 do
         for j = 1, h_tiles, 1 do
