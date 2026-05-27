@@ -604,16 +604,16 @@ function love.update(dt)
     my = love.mouse.getY() 
 
 
-    if mx > 960 then
+    if mx > (win_x/2)+20 then
         player.position = "PD"
     else    
         player.position = "PE"
     end
 
 
-    if mx >= 864 and mx <= 1056 and my > 540  then
+    if mx >= (win_x/2)-40 and mx <= (win_x/2)+40 and my > (win_y/2)+40  then
         player.position = "PS"
-    elseif mx >= 864 and mx <= 1056 and my < 540  then
+    elseif mx >= (win_x/2)-40 and mx <= (win_x/2)+40 and my < (win_y/2)-40  then
         player.position = "PU"
     end
 
@@ -1178,34 +1178,34 @@ function love.draw()
      --Slot de arma
 
         love.graphics.setColor(0.5, 0.5, 0.5)
-        love.graphics.rectangle("fill", 50, 800, 150, 150, 6, 6)
+        love.graphics.rectangle("fill", 50, win_y - 200, 150, 150, 6, 6)
 
         love.graphics.setColor(0, 0, 0)
-        love.graphics.rectangle("fill", 54, 804, 142, 142, 6, 6)
+        love.graphics.rectangle("fill", 54, win_y - 196, 142, 142, 6, 6)
 
 
 
      --Slots de itens
 
         love.graphics.setColor(0.5, 0.5, 0.5)
-        love.graphics.rectangle("fill", 1420, 10, 480, 86, 6, 6)
+        love.graphics.rectangle("fill", win_x - 500, 10, 480, 86, 6, 6)
 
         love.graphics.setColor(0, 0, 0)
 
       --Slot 1  
-        love.graphics.rectangle("fill", 1423, 13, 80, 80, 6, 6)
+        love.graphics.rectangle("fill", win_x - 497, 13, 80, 80, 6, 6)
      
       --Slot 2    
-        love.graphics.rectangle("fill", 1506, 13, 80, 80, 6, 6)
+        love.graphics.rectangle("fill", win_x - 414, 13, 80, 80, 6, 6)
 
       --Slot 3
-        love.graphics.rectangle("fill", 1589, 13, 80, 80, 6, 6)
+        love.graphics.rectangle("fill", win_x - 331, 13, 80, 80, 6, 6)
 
       --Slot 4    
-        love.graphics.rectangle("fill", 1672, 13, 80, 80, 6, 6)
+        love.graphics.rectangle("fill", win_x - 248, 13, 80, 80, 6, 6)
 
       --Slot 5 
-        love.graphics.rectangle("fill", 1755, 13, 80, 80, 6, 6)
+        love.graphics.rectangle("fill", win_x - 165, 13, 80, 80, 6, 6)
 
 
 
