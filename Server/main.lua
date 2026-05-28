@@ -158,19 +158,6 @@ end
 
 
 
-function checkCollision(a, b)
-
-    return tonumber(a.x) + (tonumber(a.w)/3) - 80 < tonumber(b.x) + tonumber(b.w) and 
-           tonumber(a.x) + tonumber(a.w) > tonumber(b.x) + 75 and
-       
-           tonumber(a.y) < tonumber(b.y) + tonumber(b.h) and
-           tonumber(a.y) + tonumber(a.h) - 75 > tonumber(b.y)
-end
-
-
-
-
-
 --Processos por Frame
 function love.update(dt)
 
@@ -208,9 +195,27 @@ function love.update(dt)
 
                 end
 
+            end
+
+        end
+
+
+        for t=1, #inimigo, 1 do
+            for y=t+1, #inimigo, 1 do
+
+                if checkCollision(inimigo[t], inimigo[y]) then
+
+                    inimigo[t].x = inimigo[t].x + (inimigo[t].x - nvx) * dt
+
+                end
+
+                if checkCollision(inimigo[t], inimigo[y]) then
+
+                    inimigo[t].y = inimigo[t].y + (inimigo[t].y - nvy) * dt
+
+                end
 
             end
-                
 
         end
 
@@ -247,6 +252,7 @@ function love.update(dt)
                 party[np].x = 0
                 party[np].y = 0
                 party[np].vida = 0
+                party[np].status = "vivo"
                 party[np].id = np
 
             --Notifica peer para criar jogador (seu próprio)
@@ -277,6 +283,29 @@ function love.update(dt)
 
               --Pega o ID da conexão
                 id = tonumber(t[5])
+
+                if t[1] == "at_ini" then
+
+                    inimigo[id].vida = inimigo[id].vida - t[2]
+                    print("A vida foi para" ..inimigo[id].vida)
+
+                    if inimigo[id].vida <= 0 then
+
+                        inimigo[id].status = "morto"
+
+                    end
+
+                    break
+
+                end
+
+
+                if t[1] == "death" then
+
+                    party[id].status = "morto"
+
+                end
+
 
                 if #party > 0 then
 
@@ -323,14 +352,15 @@ function love.update(dt)
         inimigo[i].y = y
         inimigo[i].w = 145
         inimigo[i].h = 174
+        inimigo[i].status = "vivo"
         inimigo[i].position = ""
         inimigo[i].tipo = ""
-        inimigo[i].vida = 0
+        inimigo[i].vida = 100
         inimigo[i].segue = sorteia()
 
         print("Criado" ..i)
 
-        messager_all("newi", x, y, 0, i)
+        messager_all("newi", x, y, inimigo[i].status, i)
 
         ruler = 0
 
@@ -349,43 +379,43 @@ function love.update(dt)
 
             for v=1, i, 1 do
 
-                -- Inteligência dos inimigos
+                    -- Inteligência dos inimigos
 
-                -- posição para colisão
+                    -- posição para colisão
 
-                nvx = inimigo[v].x
-                nvy = inimigo[v].y
+                    nvx = inimigo[v].x
+                    nvy = inimigo[v].y
 
-                alvo = inimigo[v].segue
+                    alvo = inimigo[v].segue
 
-                if party[alvo] then
+                    if party[alvo] then
 
-                dx = party[alvo].x - inimigo[v].x + 64
-                dy = party[alvo].y - inimigo[v].y + 64
+                    dx = party[alvo].x - inimigo[v].x + 64
+                    dy = party[alvo].y - inimigo[v].y + 64
 
-                dist = math.sqrt(dx*dx + dy*dy)
+                    dist = math.sqrt(dx*dx + dy*dy)
 
-                    if dist > 0 then
+                        if dist > 0 then
 
-                        dx = dx / dist
-                        dy = dy / dist
+                            dx = dx / dist
+                            dy = dy / dist
 
-                        inimigo[v].x = inimigo[v].x + dx * 450 * dt
-                        inimigo[v].y = inimigo[v].y + dy * 450 * dt
+                            inimigo[v].x = inimigo[v].x + dx * 450 * dt
+                            inimigo[v].y = inimigo[v].y + dy * 450 * dt
+
+                        end
 
                     end
 
-                end
 
 
+                    inimigo[v].x = inimigo[v].x
 
-                inimigo[v].x = inimigo[v].x
+                    messager_all("loadi", inimigo[v].x, inimigo[v].y, inimigo[v].status, v)
 
-                messager_all("loadi", inimigo[v].x, inimigo[v].y, 0, v)
+                    timer_i = 0
 
-                timer_i = 0
-
-                host:flush()
+                    host:flush()
 
 
             end
@@ -438,6 +468,21 @@ function love.update(dt)
 
 
 end
+
+
+
+
+
+function checkCollision(a, b)
+
+    return tonumber(a.x) + (tonumber(a.w)/3) - 80 < tonumber(b.x) + tonumber(b.w) and 
+           tonumber(a.x) + tonumber(a.w) > tonumber(b.x) + 75 and
+       
+           tonumber(a.y) < tonumber(b.y) + tonumber(b.h) and
+           tonumber(a.y) + tonumber(a.h) - 75 > tonumber(b.y)
+end
+
+
 
 
 
