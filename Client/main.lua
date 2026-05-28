@@ -124,7 +124,7 @@ function love.load()
     party[id] = {}
     party[id].x = 200
     party[id].y = 200
-    party[id].speed = 450
+    party[id].status = 450
     party[id].position = ""
     party[id].sprite = p_default[3]
     party[id].id = id
@@ -138,7 +138,7 @@ function love.load()
     inimigo[idi].y = 200
     inimigo[idi].w = 96
     inimigo[idi].h = 96
-    inimigo[idi].speed = 450
+    inimigo[idi].status = 450
     inimigo[idi].position = ""
     inimigo[idi].sprite = p_default[3]
     inimigo[idi].id = idi
@@ -352,7 +352,7 @@ function processPacket(t)
         party[id] = {}
         party[id].x = 0
         party[id].y = 0
-        party[id].speed = 0
+        party[id].status = 0
         party[id].sprite = p_default[3]
         party[id].id = id
 
@@ -370,7 +370,7 @@ function processPacket(t)
         party[idp] = {}
         party[idp].x = 0
         party[idp].y = 0
-        party[idp].speed = 0
+        party[idp].status = 0
         party[idp].position = ""
         party[idp].sprite = p_default[3]
         party[idp].id = idp
@@ -391,7 +391,7 @@ function processPacket(t)
         party[idp] = {}
         party[idp].x = 0
         party[idp].y = 0
-        party[idp].speed = 0
+        party[idp].status = 0
         party[idp].position = ""
         party[idp].sprite = p_default[3]
         party[idp].id = idp
@@ -414,7 +414,7 @@ function processPacket(t)
         inimigo[idip].y = 0
         inimigo[idip].w = 96
         inimigo[idip].h = 96
-        inimigo[idip].speed = 0
+        inimigo[idip].speed = "vivo"
         inimigo[idip].position = ""
         inimigo[idip].sprite = zumbi
         inimigo[idip].id = idip
@@ -456,7 +456,7 @@ function processPacket(t)
 
         party[idp].x = t[2]
         party[idp].y = t[3]
-        party[idp].speed = 0
+        party[idp].status = 0
         party[idp].sprite = p_down[1]
         party[idp].position = t[4]
         party[idp].id = idp
@@ -502,6 +502,25 @@ function processPacket(t)
     end
 
 
+  --Trata mote de amigo
+
+
+    if t[1] == "death" then
+
+        idp = tonumber(t[5])
+
+        party[idp].x = t[2]
+        party[idp].y = t[3]
+        party[idp].status = 0
+        party[idp].sprite = p_down[1]
+        party[idp].position = t[4]
+        party[idp].id = idp
+
+
+    end
+
+
+
   --Trata atualização de inimigo
 
     if t[1] == "loadi" then
@@ -522,7 +541,7 @@ function processPacket(t)
 
         inimigo[idip].x = t[2]
         inimigo[idip].y = t[3]
-        inimigo[idip].speed = 0
+        inimigo[idip].status = t[4]
         inimigo[idip].position = ""
         inimigo[idip].sprite = zumbi
         inimigo[idip].id = idip
@@ -575,246 +594,253 @@ function love.update(dt)
     end
 
 
- --Posição do Personagem:
-    position = "P"
-
-
-  --Define sprite quando parado do cliente da conexão
-    if player.position == "PE" then
-        player.sprite = p_default[2]
-    end
-
-    if player.position == "PD" then
-        player.sprite = p_default[1]
-    end
-
-    if player.position == "PU" then
-        player.sprite = p_default[4]
-    end
-
-    if player.position == "PS" then
-        player.sprite = p_default[3]
-    end
-
-
- --Movimentação do Personagem:
-
-  --Define Sprite por posição do mouse
-    mx = love.mouse.getX()
-    my = love.mouse.getY() 
-
-
-    if mx > (win_x/2)+20 then
-        player.position = "PD"
-    else    
-        player.position = "PE"
-    end
-
-
-    if mx >= (win_x/2)-(win_x/14) and mx <= (win_x/2)+(win_x/14) and my > (win_y/2)+(win_y/12)  then
-        player.position = "PS"
-    elseif mx >= (win_x/2)-(win_x/14) and mx <= (win_x/2)+(win_x/14) and my < (win_y/2)-(win_y/12)  then
-        player.position = "PU"
-    end
+    if player.alive then
 
 
 
- --Teclado
+    --Posição do Personagem:
+        position = "P"
 
-  --Calcula posição do jogador de acordo com comando
-    if love.keyboard.isDown("w") then        
-        player.y = player.y - player.speed * dt
-        player.sprite = p_up[1]
 
-        vy = 1
+    --Define sprite quando parado do cliente da conexão
+        if player.position == "PE" then
+            player.sprite = p_default[2]
+        end
 
-        wait(p_up[2])
+        if player.position == "PD" then
+            player.sprite = p_default[1]
+        end
 
-        player.position = "U"
+        if player.position == "PU" then
+            player.sprite = p_default[4]
+        end
 
-    end
+        if player.position == "PS" then
+            player.sprite = p_default[3]
+        end
 
-    if love.keyboard.isDown("s") then
 
-        player.y = player.y + player.speed * dt
-        player.sprite = p_down[1]
-        vy = -1
+    --Movimentação do Personagem:
 
-        wait(p_down[2])
+    --Define Sprite por posição do mouse
+        mx = love.mouse.getX()
+        my = love.mouse.getY() 
 
-        player.position = "S"
 
-    end
+        if mx > (win_x/2)+20 then
+            player.position = "PD"
+        else    
+            player.position = "PE"
+        end
 
-    if love.keyboard.isDown("a") then
 
-        player.x = player.x - player.speed * dt
-        player.sprite = p_left[1]
-        vx = 1
-
-        wait(p_left[2])
-
-        player.position = "E"
-
-    end
-
-    if love.keyboard.isDown("d") then
-
-        player.x = player.x + player.speed * dt
-        player.sprite = p_right[1]
-        vx = -1
-
-        wait(p_right[2])
-
-        player.position = "D"
-
-    end
+        if mx >= (win_x/2)-(win_x/14) and mx <= (win_x/2)+(win_x/14) and my > (win_y/2)+(win_y/12)  then
+            player.position = "PS"
+        elseif mx >= (win_x/2)-(win_x/14) and mx <= (win_x/2)+(win_x/14) and my < (win_y/2)-(win_y/12)  then
+            player.position = "PU"
+        end
 
 
 
-    function wait(sprite)
+    --Teclado
 
-        if step > 0.25 then
-            player.sprite = sprite
+    --Calcula posição do jogador de acordo com comando
+        if love.keyboard.isDown("w") then        
+            player.y = player.y - player.speed * dt
+            player.sprite = p_up[1]
 
-            if step > 0.5 then
-                step = 0
+            vy = 1
+
+            wait(p_up[2])
+
+            player.position = "U"
+
+        end
+
+        if love.keyboard.isDown("s") then
+
+            player.y = player.y + player.speed * dt
+            player.sprite = p_down[1]
+            vy = -1
+
+            wait(p_down[2])
+
+            player.position = "S"
+
+        end
+
+        if love.keyboard.isDown("a") then
+
+            player.x = player.x - player.speed * dt
+            player.sprite = p_left[1]
+            vx = 1
+
+            wait(p_left[2])
+
+            player.position = "E"
+
+        end
+
+        if love.keyboard.isDown("d") then
+
+            player.x = player.x + player.speed * dt
+            player.sprite = p_right[1]
+            vx = -1
+
+            wait(p_right[2])
+
+            player.position = "D"
+
+        end
+
+
+
+        function wait(sprite)
+
+            if step > 0.25 then
+                player.sprite = sprite
+
+                if step > 0.5 then
+                    step = 0
+                end
             end
         end
-    end
 
 
 
-  --Correr com Shift
-    if love.keyboard.isDown("lshift") then
+    --Correr com Shift
+        if love.keyboard.isDown("lshift") then
 
-        player.speed = 2000
-        braltura_s = 14
-        brx_s = 36
-        bry_s = 16
-        board_s = 2
-
-        if tamanho_s >= 1 then
-
-            tamanho_s = tamanho_s - 1 
-       
-        else 
-
-            player.speed = 1500
-            braltura_s = 0
-            brx_s = 0
-            bry_s = 0
-            board_s = 0
-
-        end
-    
-    else 
-        
-        player.speed = 1500
-
-        if tamanho_s <= 243 then
-
-            tamanho_s = tamanho_s + 1
+            player.speed = 2000
             braltura_s = 14
             brx_s = 36
             bry_s = 16
             board_s = 2
 
-        end
+            if tamanho_s >= 1 then
 
-    end
+                tamanho_s = tamanho_s - 1 
+        
+            else 
 
-    
-  --Regenração do Escudo
-    if reg_timer > 1.75 and tamanho_d <= 4 then
+                player.speed = 1500
+                braltura_s = 0
+                brx_s = 0
+                bry_s = 0
+                board_s = 0
 
-        reg_timer = 0
-        tamanho_d = tamanho_d + 1
+            end
+        
+        else 
+            
+            player.speed = 1500
 
-    elseif tamanho_d == 1 then
+            if tamanho_s <= 243 then
 
-        braltura_d = 14
-        brx_d = 36
-        bry_d = 16
-        board_d = 2
+                tamanho_s = tamanho_s + 1
+                braltura_s = 14
+                brx_s = 36
+                bry_s = 16
+                board_s = 2
 
-    elseif tamanho_d == 0 then
-
-        braltura_d = 0
-        brx_d = 0
-        bry_d = 0
-        board_d = 0
-
-    end
-
-
-
-  --Mouse 
-
-    if t_bullet == true then
-
-        shoots = shoots + dt
-
-        if shoots > 0.1 then
-
-            t_bullet = false
-            shoots = 0
+            end
 
         end
 
+        
+    --Regenração do Escudo
+        if reg_timer > 1.75 and tamanho_d <= 4 then
+
+            reg_timer = 0
+            tamanho_d = tamanho_d + 1
+
+        elseif tamanho_d == 1 then
+
+            braltura_d = 14
+            brx_d = 36
+            bry_d = 16
+            board_d = 2
+
+        elseif tamanho_d == 0 then
+
+            braltura_d = 0
+            brx_d = 0
+            bry_d = 0
+            board_d = 0
+
+        end
+
+
+
+    --Mouse 
+
+        if t_bullet == true then
+
+            shoots = shoots + dt
+
+            if shoots > 0.1 then
+
+                t_bullet = false
+                shoots = 0
+
+            end
+
+        end
+
+
+        if love.mouse.isDown(1) and t_bullet == false then
+
+            t_bullet = true
+
+            a = a + 1
+
+            tx = mira_x
+            ty = mira_y
+
+            ger_tiro(tx, ty, mira_ang, a)
+
+        end
+
+
+
+    --Disparos
+
+        function ger_tiro(tx, ty, mira_ang, a)
+
+            shoot[a] = {}
+            shoot[a].x = player.x + 100
+            shoot[a].y = player.y + (player.h/2)
+            shoot[a].w = 5
+            shoot[a].h = 5
+            shoot[a].ang = mira_ang
+            shoot[a].id = a
+
+            drawtiro(a)
+
+        end
+
+        function drawtiro(a)
+
+            shoot[a].x = shoot[a].x + math.cos(shoot[a].ang) * 10
+            shoot[a].y = shoot[a].y + math.sin(shoot[a].ang) * 10 
+
+            love.graphics.draw(tiro, shoot[a].x, shoot[a].y, shoot[a].ang, 1, 1, tiro:getWidth()/2, tiro:getHeight()/2)
+
+        end
+
+
+
+    --Envia Dados do jogador ao Server
+
+                    --Limita a cerca de 24+ envios por segundo
+        if timer >= 0.042 and id ~= 0 then
+            messager(player.position, player.x, player.y, player.speed, id)
+            timer = 0
+        end
+
+
+
     end
-
-
-    if love.mouse.isDown(1) and t_bullet == false then
-
-        t_bullet = true
-
-        a = a + 1
-
-        tx = mira_x
-        ty = mira_y
-
-        ger_tiro(tx, ty, mira_ang, a)
-
-    end
-
-
-
-  --Disparos
-
-    function ger_tiro(tx, ty, mira_ang, a)
-
-        shoot[a] = {}
-        shoot[a].x = player.x + 100
-        shoot[a].y = player.y + (player.h/2)
-        shoot[a].w = 5
-        shoot[a].h = 5
-        shoot[a].ang = mira_ang
-        shoot[a].id = a
-
-        drawtiro(a)
-
-    end
-
-    function drawtiro(a)
-
-        shoot[a].x = shoot[a].x + math.cos(shoot[a].ang) * 10
-        shoot[a].y = shoot[a].y + math.sin(shoot[a].ang) * 10 
-
-        love.graphics.draw(tiro, shoot[a].x, shoot[a].y, shoot[a].ang, 1, 1, tiro:getWidth()/2, tiro:getHeight()/2)
-
-    end
-
-
-
- --Envia Dados do jogador ao Server
-
-                --Limita a cerca de 24+ envios por segundo
-    if timer >= 0.042 and id ~= 0 then
-        messager(player.position, player.x, player.y, player.speed, id)
-        timer = 0
-    end
-
 
 
 
@@ -876,17 +902,21 @@ function love.update(dt)
 
         for j=1, #inimigo, 1 do
             
-            v_colisao_a = inimigo[j]
+            if inimigo[j].status == "vivo" then
+                
+                v_colisao_a = inimigo[j]
 
-            if checkCollision(player, v_colisao_a) == true then
+                if checkCollision(player, v_colisao_a) == true then
 
-                player.x = nvx
-            
-            end
+                    player.x = nvx
+                
+                end
 
-            if checkCollision(player, v_colisao_a) then
+                if checkCollision(player, v_colisao_a) then
 
-                player.y = nvy
+                    player.y = nvy
+
+                end
 
             end
 
@@ -915,6 +945,10 @@ function love.update(dt)
 
                             if tamanho_v <= 0 then
                                 player.alive = false
+
+                                messager("death", 0, 0, 0, id)
+                                --função para tela de morte
+
                             end
 
                         end
@@ -941,7 +975,13 @@ function love.update(dt)
 
                     if checkTiro(inimigo[t], shoot[r]) then
 
+                        
+                        messager("at_ini",10,0,0, inimigo[t].id)
+                        
+                        
                         tamanho_s = 0
+
+
 
                     end
 
@@ -1140,8 +1180,14 @@ function love.draw()
     if #inimigos > 0 then
 
         for n=1, #inimigos, 1 do
-            infa = inimigos[n]
-            love.graphics.draw(inimigo[infa].sprite, inimigo[infa].x, inimigo[infa].y, 0, conversor, conversor, inimigo[infa].sprite:getWidth()/2, inimigo[infa].sprite:getHeight()/2)
+
+            if inimigo[n].status == "vivo" then
+    
+                infa = inimigos[n]
+                love.graphics.draw(inimigo[infa].sprite, inimigo[infa].x, inimigo[infa].y, 0, conversor, conversor, inimigo[infa].sprite:getWidth()/2, inimigo[infa].sprite:getHeight()/2)
+     
+            end
+        
         end
 
     end
@@ -1219,10 +1265,10 @@ function love.draw()
      --Slot de arma
 
         love.graphics.setColor(0.5, 0.5, 0.5)
-        love.graphics.rectangle("fill", 50, win_y - 200, 150, 150, 6, 6)
+        love.graphics.rectangle("fill", 50, win_y - 300, 150, 150, 6, 6)
 
         love.graphics.setColor(0, 0, 0)
-        love.graphics.rectangle("fill", 54, win_y - 196, 142, 142, 6, 6)
+        love.graphics.rectangle("fill", 54, win_y - 296, 142, 142, 6, 6)
 
 
 
