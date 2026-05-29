@@ -85,7 +85,7 @@ function love.load()
     invent = love.graphics.newImage("telas/inventario.png")
 
 
-    
+    glock = love.graphics.newImage("inimigos/glock.png") 
     tiro = love.graphics.newImage("inimigos/tiro.png")
     zumbi = love.graphics.newImage("inimigos/zumbi.png")
 
@@ -609,6 +609,22 @@ function love.update(dt)
     mira_y = (my + player.y + player.w) - love.graphics.getHeight()/2
 
     mira_ang = math.atan2((mira_y - (player.y + player.h/2)), (mira_x - player.x))
+    
+    print(mira_ang)
+
+    if mira_ang >= -1.6 then
+
+        mira_arma = mira_ang
+
+    end
+
+    if mira_ang > 1.6 then
+ 
+        mira_arma = 0
+
+    end
+
+    if 
 
 
   --Animação tela inicial
@@ -1269,7 +1285,7 @@ function love.draw()
     --Gera Personagem
 
         love.graphics.draw(player.sprite, player.x, player.y, 0, conversor, conversor)
-
+        love.graphics.draw(glock, player.x+player.w-30, player.y+player.h-75, mira_arma)
 
     --Executa
 
