@@ -6,7 +6,7 @@
 local drawed = {}
 
 
-function drawed.draw(coli ,grama, rua, rua_esq, mapa, v_tiles, h_tiles, tile_width, tile_height, left_corner, conversor)
+function drawed.draw(coli ,calcada, rua, rua_esq, gramagrande, mapa, v_tiles, h_tiles, tile_width, tile_height, left_corner, conversor)
 
     for i = 1, v_tiles, 1 do
         for j = 1, h_tiles, 1 do
@@ -28,9 +28,14 @@ function drawed.draw(coli ,grama, rua, rua_esq, mapa, v_tiles, h_tiles, tile_wid
             
             elseif (mapa[i][j] == "D") then
                 love.graphics.draw(rua, (j*tile_height), (i*tile_width))
-    
+            
+            
+            elseif (mapa[i][j] == "C") then           
+                love.graphics.draw(calcada, (j*tile_height), (i*tile_width))            
+
+
             elseif (mapa[i][j] == "G") then           
-                love.graphics.draw(grama, (j*tile_height), (i*tile_width))
+                love.graphics.draw(gramagrande, (j*tile_height), (i*tile_width))
             
             end
         end
@@ -72,6 +77,67 @@ function drawed.draw_soft(noth, parede, soft, v_tiles, h_tiles, tile_width, tile
 end
 
 
+function drawed.draw_brut_enf(noth, ponto_onibus, muro, grade, enf_brut, v_tiles, h_tiles, tile_width, tile_height, left_corner, conversor)
+
+    for i = 1, v_tiles, 1 do
+        for j = 1, h_tiles, 1 do
+            if (enf_brut[i][j] == "P") then
+
+
+                table.insert(co_mun, {
+
+                x = j*tile_width,
+                y = i*tile_height,
+                w = 192,
+                h = 192})
+
+
+
+                love.graphics.draw(ponto_onibus, (j*tile_height), (i*tile_width))
+            
+            elseif (enf_brut[i][j] == "N") then
+                love.graphics.draw(noth, (j*tile_height), (i*tile_width))
+    
+
+
+
+            elseif (enf_brut[i][j] == "M") then
+            
+                table.insert(co_mun, {
+
+                x = j*tile_width,
+                y = i*tile_height,
+                w = 192,
+                h = 192})
+
+                            
+                love.graphics.draw(muro, (j*tile_height), (i*tile_width))
+    
+
+
+            elseif (enf_brut[i][j] == "G") then
+            
+                table.insert(co_mun, {
+
+                x = j*tile_width,
+                y = i*tile_height,
+                w = 192,
+                h = 192})
+
+                            
+                love.graphics.draw(grade, (j*tile_height), (i*tile_width))
+
+
+
+
+
+            end
+        end
+    end
+
+    return was_draw
+
+end
 
 
 
