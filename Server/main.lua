@@ -379,6 +379,7 @@ function love.update(dt)
 
             for v=1, i, 1 do
 
+                if inimigo[v].status == "vivo" then
                     -- Inteligência dos inimigos
 
                     -- posição para colisão
@@ -416,6 +417,16 @@ function love.update(dt)
                     timer_i = 0
 
                     host:flush()
+
+                end
+
+                if inimigo[v].status == "morto" then
+
+                    messager_all("loadi", 0, 0, inimigo[id].status, id)
+
+                end
+
+
 
 
             end
@@ -492,21 +503,3 @@ function sorteia()
     return sort
 end
 
-
-function love.draw()
-
-    if #party > 0 then
-
-        msg1 = tostring(party[id].id)
-        msg2 = tostring(party[id].x)
-        msg3 = tostring(party[id].y)
-
-        msg = "ID:".. msg1 ..", X:".. msg2 ..", Y:".. msg3
-
-        love.graphics.print(msg, 100, 50 * id)
-
-
-    end
-
-
-end
