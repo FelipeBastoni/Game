@@ -52,21 +52,34 @@ function love.load()
 
   --Imagens do Cenário
 
-    grama = love.graphics.newImage("cenario/calcada.png")
+    calcada = love.graphics.newImage("cenario/calcada.png")
     coli = love.graphics.newImage("cenario/coli.png")
     rua = love.graphics.newImage("cenario/ruaed.png")
     rua_esq = love.graphics.newImage("cenario/ruaedesq.png")
+    gramagrande = love.graphics.newImage("cenario/gramagrande.png")
 
 
+
+
+    --enfeite soft (32)
 
     noth = love.graphics.newImage("cenario/noth.png")
     parede = love.graphics.newImage("cenario/parede.png")
     
 
+    --enfeite bruto (192)
+
+    nada = love.graphics.newImage("cenario/nada.png")
+    ponto_onibus = love.graphics.newImage("cenario/ponto_de_onibus.png")
+    muro = love.graphics.newImage("cenario/muro.png")
+    grade = love.graphics.newImage("cenario/grade.png")
+
+
+
 
     
-    stone = love.graphics.newImage("cenario/grama.png")
-    sky = love.graphics.newImage("cenario/grama.png")
+    stone = love.graphics.newImage("cenario/calcada.png")
+    sky = love.graphics.newImage("cenario/calcada.png")
     
     tiro = love.graphics.newImage("inimigos/tiro.png")
     zumbi = love.graphics.newImage("inimigos/zumbi.png")
@@ -251,6 +264,7 @@ function love.load()
   --Array para procesamento do mapa
     mapa = {}
     soft = {}
+    enf_brut = {}
 
   --Altura da imagem (tile)
     tile_height = 192
@@ -266,6 +280,11 @@ function love.load()
     v_tiles = 0      
     sv_tiles = 0 
 
+
+    brut_h_tiles = 0
+    brut_v_tiles = 0
+
+
   --Ponto esquerdo do cenário que será apresentado
     left_corner = 1 
 
@@ -274,6 +293,8 @@ function love.load()
  --Carrega o Cenário
     mapa, h_tiles, v_tiles = l_mapa.LoadMap("mapa.txt") 
 
+    enf_brut, brut_h_tiles, brut_v_tiles = l_mapa.LoadMapEnf("enf_brut.txt") 
+    
     soft, sh_tiles, sv_tiles = l_mapa.Loadsoft("soft.txt")
 
 end
@@ -551,8 +572,6 @@ function processPacket(t)
 end
 
 
-
-
 --Messager (envio de dados (cliente --> Servidor))
 
 function messager(sentido, x, y, vida, id)
@@ -590,7 +609,7 @@ function love.update(dt)
   --Animação tela inicial
 
     if runner == false then
-        alfa, cut_timer, runner = tela_inicial.anim(dt, alfa, cut_timer)
+        alfa, cut_timer, runner = tela_inicial.anim(dt, alfa, cut_timer, win_x, win_y)
     end
 
 
@@ -940,21 +959,20 @@ function love.update(dt)
                     if player.alive then
 
                         if tamanho_d <= 0 then
-                            tamanho_v = tamanho_v - 1 
+                            tamanho_v = tamanho_v - 3
                             damage_timer = 0
 
                             if tamanho_v <= 0 then
                                 player.alive = false
 
                                 messager("death", 0, 0, 0, id)
-                                --função para tela de morte
 
                             end
 
                         end
 
                         if tamanho_d > 0 then
-                            tamanho_d = tamanho_d - 1 
+                            tamanho_d = tamanho_d - 5 
                             damage_timer = 0
 
                         end
@@ -1113,7 +1131,7 @@ function love.draw()
 
   --Lógica de exibição tela inicial ---> jogo
     if runner == false then
-        tela_inicial.initial(alfa)
+        tela_inicial.initial(alfa, win_x, win_y)
     end
 
     if runner == true then
@@ -1124,7 +1142,7 @@ function love.draw()
 
   --Jogo rodando
 
-    if runner == 7 then
+    if runner == 7 and player.alive == true then
 
     --Tamanho da tela
 
@@ -1158,14 +1176,20 @@ function love.draw()
 
     --Gera Cenário e colisão
 
-        drawed.draw(coli ,grama, rua, rua_esq, mapa, v_tiles, h_tiles, tile_width, tile_height, left_corner, conversor)
+        drawed.draw(coli ,calcada, rua, rua_esq, gramagrande, mapa, v_tiles, h_tiles, tile_width, tile_height, left_corner, conversor)
+
+
+    --Gera cenário de enfeite bruto
+    
+        drawed.draw_brut_enf(nada, ponto_onibus, muro, grade, enf_brut, brut_v_tiles, brut_h_tiles, tile_width, tile_height, left_corner, conversor)
 
 
     --Gera cenário "Soft" e colisão
 
         drawed.draw_soft(noth, parede, soft, sv_tiles, sh_tiles, 32, 32, left_corner, conversor)
 
-
+    
+    
 
     -- Array da party
 
@@ -1300,6 +1324,19 @@ function love.draw()
         love.graphics.setColor(1,1,1)
 
     end
+
+    if player.alive == false then
+
+        fundo = love.graphics.newImage("telas/AAA.png")
+
+        love.graphics.draw(fundo)
+
+
+    end
+
+
+
+
 
 
 end
