@@ -77,11 +77,14 @@ function love.load()
     grade = love.graphics.newImage("cenario/grade.png")
 
 
+    --icones
+
+    vida = love.graphics.newImage("telas/vida.png")
+    escudo = love.graphics.newImage("telas/escudo.png") 
+    stamina = love.graphics.newImage("telas/stamina.png")
+    invent = love.graphics.newImage("telas/inventario.png")
 
 
-    
-    stone = love.graphics.newImage("cenario/calcada.png")
-    sky = love.graphics.newImage("cenario/calcada.png")
     
     tiro = love.graphics.newImage("inimigos/tiro.png")
     zumbi = love.graphics.newImage("inimigos/zumbi.png")
@@ -1282,6 +1285,8 @@ function love.draw()
 
 
         --Barra de vida
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.draw(vida, 18, 16)
         love.graphics.setColor(0, 0, 0)
         love.graphics.rectangle("fill", 35, 15, 246, 17, 2)
 
@@ -1290,6 +1295,8 @@ function love.draw()
 
 
         --Barra de Escudo
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.draw(escudo, 18, 37)
         love.graphics.setColor(0, 0, 0)
         love.graphics.rectangle("fill", 35, 36, 246, 17, 2)
 
@@ -1298,6 +1305,8 @@ function love.draw()
 
 
         --Barra de stamina
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.draw(stamina, 18, 58)
         love.graphics.setColor(0, 0, 0)
         love.graphics.rectangle("fill", 35, 57, 246, 17, 2)
 
@@ -1317,6 +1326,7 @@ function love.draw()
 
 
         --Slots de itens
+
 
         love.graphics.setColor(0.5, 0.5, 0.5)
         love.graphics.rectangle("fill", win_x - 500, 10, 480, 86, 6, 6)
@@ -1338,7 +1348,8 @@ function love.draw()
         --Slot 5 
         love.graphics.rectangle("fill", win_x - 165, 13, 80, 80, 6, 6)
 
-
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.draw(invent, win_x-70, 35)
 
         --Reseta cores
         love.graphics.setColor(1,1,1)
