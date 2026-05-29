@@ -41,7 +41,7 @@ end
 
 function tela_inicial.anim(dt, alfa, cut_timer, x ,y)
 
-    local runner = false
+    local runner = 0
 
     if alfa < 1 and cut_timer == 1 then
         alfa = alfa + (dt/4)
@@ -57,7 +57,7 @@ function tela_inicial.anim(dt, alfa, cut_timer, x ,y)
     end
     if love.keyboard.isDown("space") then
         alfa = 0
-        runner = true
+        runner = 1
     end
 
     return alfa, cut_timer, runner
