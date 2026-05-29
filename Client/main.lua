@@ -624,8 +624,7 @@ function love.update(dt)
 
     end
 
-    if 
-
+    
 
   --Animação tela inicial
 
