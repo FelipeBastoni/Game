@@ -56,6 +56,8 @@ function love.load()
     coli = love.graphics.newImage("cenario/coli.png")
     rua = love.graphics.newImage("cenario/ruaed.png")
     rua_esq = love.graphics.newImage("cenario/ruaedesq.png")
+    rua_b = love.graphics.newImage("cenario/ruaed_horb.png") 
+    rua_c = love.graphics.newImage("cenario/ruaed_horc.png")
     gramagrande = love.graphics.newImage("cenario/gramagrande.png")
 
 
@@ -174,7 +176,7 @@ function love.load()
 
 
  --Executor do jogo
-    runner = false
+    runner = 0
 
  --Time step do envio de pacotes
     timer = 0
@@ -608,7 +610,7 @@ function love.update(dt)
 
   --Animação tela inicial
 
-    if runner == false then
+    if runner == 0 then
         alfa, cut_timer, runner = tela_inicial.anim(dt, alfa, cut_timer, win_x, win_y)
     end
 
@@ -863,14 +865,32 @@ function love.update(dt)
 
 
 
-    if runner == 7 then
+    if runner == 2 then
 
-        if player.x <= 100 and player.y  >= -1000 then
+        if player.x <= 1152 then
 
-            player.x = 100
-            player.y = player.y
+            player.x = 1152
 
         end
+
+        if player.x >= 7680 then
+
+            player.x = 7680
+
+        end
+        
+        if player.y <= 590 then
+
+            player.y = 590
+
+        end
+
+        if player.y >= 4416 then
+
+            player.y = 4416
+
+        end
+
 
 
         for j=1, #co_mun, 1 do
@@ -878,52 +898,23 @@ function love.update(dt)
             v_colisao_a = co_mun[j]
 
 
-                if win_x <= 1366 then    
+            if win_x <= 1366 then    
 
 
-                    if checkCorr(player, v_colisao_a) == true then
+                if checkCorr(player, v_colisao_a) == true then
 
-                        player.x = nvx
-                    
-                    end
+                    player.x = nvx
+                
+                end
 
-                    if checkCorr(player, v_colisao_a) then
+                if checkCorr(player, v_colisao_a) then
 
-                        player.y = nvy
-
-                    end
-
-
-                else 
-
-                    if checkCollision(player, v_colisao_a) == true then
-
-                        player.x = nvx
-                    
-                    end
-
-                    if checkCollision(player, v_colisao_a) then
-
-                        player.y = nvy
-
-                    end
+                    player.y = nvy
 
                 end
 
-        end
-    end
 
-
-    
---Colisão
-
-    if runner == 7 and #inimigo > 0 then
-
-        for j=1, #inimigo, 1 do
-            
-            if inimigo[j].status == "vivo" then
-                
-                v_colisao_a = inimigo[j]
+            else 
 
                 if checkCollision(player, v_colisao_a) == true then
 
@@ -939,41 +930,69 @@ function love.update(dt)
 
             end
 
-
         end
 
 
+
         
+    --Colisão
 
+        if runner == 2 and #inimigo > 0 then
 
---Colisão do dano
-
-        for j=1, #inimigo, 1 do
-            
-            if damage_timer >= 2 then
-
-                v_colisao_a = inimigo[j]
-
-                if checkDamage(player, v_colisao_a) then
+            for j=1, #inimigo, 1 do
+                
+                if inimigo[j].status == "vivo" then
                     
-                    if player.alive then
+                    v_colisao_a = inimigo[j]
 
-                        if tamanho_d <= 0 then
-                            tamanho_v = tamanho_v - 3
-                            damage_timer = 0
+                    if checkCollision(player, v_colisao_a) == true then
 
-                            if tamanho_v <= 0 then
-                                player.alive = false
+                        player.x = nvx
+                    
+                    end
 
-                                messager("death", 0, 0, 0, id)
+                    if checkCollision(player, v_colisao_a) then
+
+                        player.y = nvy
+
+                    end
+
+                end
+
+
+            end
+
+
+    --Colisão do dano
+
+            for j=1, #inimigo, 1 do
+                
+                if damage_timer >= 2 then
+
+                    v_colisao_a = inimigo[j]
+
+                    if checkDamage(player, v_colisao_a) then
+                        
+                        if player.alive then
+
+                            if tamanho_d <= 0 then
+                                tamanho_v = tamanho_v - 3
+                                damage_timer = 0
+
+                                if tamanho_v <= 0 then
+                                    player.alive = false
+
+                                    messager("death", 0, 0, 0, id)
+
+                                end
 
                             end
 
-                        end
+                            if tamanho_d > 0 then
+                                tamanho_d = tamanho_d - 5 
+                                damage_timer = 0
 
-                        if tamanho_d > 0 then
-                            tamanho_d = tamanho_d - 5 
-                            damage_timer = 0
+                            end
 
                         end
 
@@ -983,91 +1002,89 @@ function love.update(dt)
 
             end
 
-        end
+            
+            if #shoot > 0 and #inimigo > 0 then
 
-        
-        if #shoot > 0 and #inimigo > 0 then
+                for r=1, #shoot, 1 do
+                    for t=1, #inimigo, 1 do 
 
-            for r=1, #shoot, 1 do
-                for t=1, #inimigo, 1 do 
+                        if checkTiro(inimigo[t], shoot[r]) then
 
-                    if checkTiro(inimigo[t], shoot[r]) then
-
-                        
-                        messager("at_ini",10,0,0, inimigo[t].id)
-                        
-                        
-                        tamanho_s = 0
+                            
+                            messager("at_ini",10,0,0, inimigo[t].id)
+                            
+                            
+                            tamanho_s = 0
 
 
 
-                    end
+                        end
 
-                end            
+                    end            
+                end
+
             end
 
+
+
+        
+
+
         end
 
-
-
-    
-
-
-    end
-
-    nvx = player.x
-    nvy = player.y
+        nvx = player.x
+        nvy = player.y
 
 
 
     --Checa interação com item
 
 
-    
-    if runner == 7 and #item > 0 then
+        
+        if runner == 2 and #item > 0 then
 
-        for pi=1, #item, 1 do
-            
-            v_colisao_a = item[pi]
+            for pi=1, #item, 1 do
+                
+                v_colisao_a = item[pi]
 
 
-            if checkItem(player, v_colisao_a) == true then
-                if checkItem(player, v_colisao_a) then
+                if checkItem(player, v_colisao_a) == true then
+                    if checkItem(player, v_colisao_a) then
 
-                    if love.keyboard.isDown("e") then 
+                        if love.keyboard.isDown("e") then 
 
-                        if item[pi].tipo == "vida" and #inventario_vida < 5 then
+                            if item[pi].tipo == "vida" and #inventario_vida < 5 then
 
-                            table.insert(inventario_vida, item[pi])
+                                table.insert(inventario_vida, item[pi])
 
-                            print("pegou o item"..item[pi].id)            
+                                print("pegou o item"..item[pi].id)            
+                                
+
+                            elseif item[pi].tipo == "arma" and #inventario_arma < 1 then
                             
+                                table.insert(inventario_arma, item[pi])
 
-                        elseif item[pi].tipo == "arma" and #inventario_arma < 1 then
-                        
-                            table.insert(inventario_arma, item[pi])
+                                print("pegou o item"..item[pi].id)            
 
-                            print("pegou o item"..item[pi].id)            
+
+                            end
 
 
                         end
 
-
                     end
+
 
                 end
 
-
             end
+        
+            
 
         end
-    
-        
+
 
     end
-
-
-
 
 end
 
@@ -1130,19 +1147,20 @@ end
 function love.draw()
 
   --Lógica de exibição tela inicial ---> jogo
-    if runner == false then
+    if runner == 0 then
         tela_inicial.initial(alfa, win_x, win_y)
     end
 
-    if runner == true then
+    if runner == 1 then
         tela_inicial.start()
-        runner = 7
+        runner = 2
     end
 
 
   --Jogo rodando
 
-    if runner == 7 and player.alive == true then
+    if runner == 2 and player.alive == true then
+
 
     --Tamanho da tela
 
@@ -1176,7 +1194,7 @@ function love.draw()
 
     --Gera Cenário e colisão
 
-        drawed.draw(coli ,calcada, rua, rua_esq, gramagrande, mapa, v_tiles, h_tiles, tile_width, tile_height, left_corner, conversor)
+        drawed.draw(coli ,calcada, rua, rua_esq, rua_c, rua_b, gramagrande, mapa, v_tiles, h_tiles, tile_width, tile_height, left_corner, conversor)
 
 
     --Gera cenário de enfeite bruto
@@ -1193,56 +1211,58 @@ function love.draw()
 
     -- Array da party
 
-    for n=1, #jogadores, 1 do
-        infa = jogadores[n]
-        love.graphics.draw(party[infa].sprite, party[infa].x, party[infa].y, 0, conversor, conversor)
-    end
+        for n=1, #jogadores, 1 do
+            infa = jogadores[n]
+            love.graphics.draw(party[infa].sprite, party[infa].x, party[infa].y, 0, conversor, conversor)
+        end
 
 
     --Array dos inimigos
 
-    if #inimigos > 0 then
+        if #inimigos > 0 then
 
-        for n=1, #inimigos, 1 do
+            for n=1, #inimigos, 1 do
 
-            if inimigo[n].status == "vivo" then
-    
-                infa = inimigos[n]
-                love.graphics.draw(inimigo[infa].sprite, inimigo[infa].x, inimigo[infa].y, 0, conversor, conversor, inimigo[infa].sprite:getWidth()/2, inimigo[infa].sprite:getHeight()/2)
-     
-            end
+                if inimigo[n].status == "vivo" then
         
-        end
+                    infa = inimigos[n]
+                    love.graphics.draw(inimigo[infa].sprite, inimigo[infa].x, inimigo[infa].y, 0, conversor, conversor, inimigo[infa].sprite:getWidth()/2, inimigo[infa].sprite:getHeight()/2)
+        
+                end
+            
+            end
 
-    end
+        end
 
 
     --Desenha item
 
-    if #itens > 0 then
+        if #itens > 0 then
 
-        for n=1, #itens, 1 do
+            for n=1, #itens, 1 do
 
-            ite = itens[n]
+                ite = itens[n]
 
-            love.graphics.setColor(1,1,1)
-            love.graphics.draw(item[ite].sprite, item[ite].x, item[ite].y, 0, conversor, conversor)
+                love.graphics.setColor(1,1,1)
+                love.graphics.draw(item[ite].sprite, item[ite].x, item[ite].y, 0, conversor, conversor)
+
+            end
 
         end
 
-    end
 
 
+        if a > 0 then
 
-    if a > 0 then
+            for u=1, a ,1 do
+                drawtiro(u)
+            end
 
-        for u=1, a ,1 do
-            drawtiro(u)
         end
 
-    end
 
-    
+
+
     --Gera Personagem
 
         love.graphics.draw(player.sprite, player.x, player.y, 0, conversor, conversor)
@@ -1255,13 +1275,13 @@ function love.draw()
 
     --HUDs
 
-     --Barras de status
+        --Barras de status
 
         love.graphics.setColor(0.5, 0.5, 0.5)
         love.graphics.rectangle("fill", 10, 10, 276, 70, 6, 6)
 
 
-      --Barra de vida
+        --Barra de vida
         love.graphics.setColor(0, 0, 0)
         love.graphics.rectangle("fill", 35, 15, 246, 17, 2)
 
@@ -1269,7 +1289,7 @@ function love.draw()
         love.graphics.rectangle("fill", brx_v, bry_v, (tamanho_v*81), braltura_v, board_v, board_v)
 
 
-      --Barra de Escudo
+        --Barra de Escudo
         love.graphics.setColor(0, 0, 0)
         love.graphics.rectangle("fill", 35, 36, 246, 17, 2)
 
@@ -1277,7 +1297,7 @@ function love.draw()
         love.graphics.rectangle("fill", brx_d, bry_d+21, (tamanho_d*48.6), braltura_d, board_d, board_d)
 
 
-      --Barra de stamina
+        --Barra de stamina
         love.graphics.setColor(0, 0, 0)
         love.graphics.rectangle("fill", 35, 57, 246, 17, 2)
 
@@ -1286,7 +1306,7 @@ function love.draw()
 
 
 
-     --Slot de arma
+        --Slot de arma
 
         love.graphics.setColor(0.5, 0.5, 0.5)
         love.graphics.rectangle("fill", 50, win_y - 300, 150, 150, 6, 6)
@@ -1296,34 +1316,37 @@ function love.draw()
 
 
 
-     --Slots de itens
+        --Slots de itens
 
         love.graphics.setColor(0.5, 0.5, 0.5)
         love.graphics.rectangle("fill", win_x - 500, 10, 480, 86, 6, 6)
 
         love.graphics.setColor(0, 0, 0)
 
-      --Slot 1  
+        --Slot 1  
         love.graphics.rectangle("fill", win_x - 497, 13, 80, 80, 6, 6)
-     
-      --Slot 2    
+        
+        --Slot 2    
         love.graphics.rectangle("fill", win_x - 414, 13, 80, 80, 6, 6)
 
-      --Slot 3
+        --Slot 3
         love.graphics.rectangle("fill", win_x - 331, 13, 80, 80, 6, 6)
 
-      --Slot 4    
+        --Slot 4    
         love.graphics.rectangle("fill", win_x - 248, 13, 80, 80, 6, 6)
 
-      --Slot 5 
+        --Slot 5 
         love.graphics.rectangle("fill", win_x - 165, 13, 80, 80, 6, 6)
 
 
 
-      --Reseta cores
+        --Reseta cores
         love.graphics.setColor(1,1,1)
 
+
     end
+    
+
 
     if player.alive == false then
 
