@@ -3,21 +3,33 @@ local tela_inicial = {}
 
 --Chama a tela inicial
 
-function tela_inicial.initial(alfa)
+function tela_inicial.initial(alfa, x, y)
 
   --Define o fundo
     fundo = love.graphics.newImage("telas/AAA.png")
 
   --Define a fonte
+
+  --Printa o fundo
+
+    love.graphics.setBackgroundColor(1, 0, 0.2)
+
+    love.graphics.setColor(1, 1, 1, 1)
+
+    fonte = love.graphics.newFont(75)
+    love.graphics.setFont(fonte)
+
+    titulo = "O QUE DEU NA TV"
+    love.graphics.print(titulo, (x - love.graphics.getFont():getWidth(titulo))/2, (y/3))
+
+
+
     fonte = love.graphics.newFont(25)
     love.graphics.setFont(fonte)
 
-  --Printa o fundo
-    love.graphics.setColor(1, 1, 1, 1)
-    love.graphics.draw(fundo)
     text = "PRESSIONE A TECLA ESPAÇO PARA JOGAR"
     love.graphics.setColor(1, 1, 1, alfa)
-    love.graphics.print(text, (love.graphics.getWidth() - love.graphics.getFont():getWidth(text))/2, (love.graphics.getHeight()/2)+250)
+    love.graphics.print(text, (x - love.graphics.getFont():getWidth(text))/2, ((y/2)+(y/5)))
 
     love.graphics.setColor(1, 1, 1, 1)
 
@@ -27,7 +39,7 @@ end
 
 
 
-function tela_inicial.anim(dt, alfa, cut_timer)
+function tela_inicial.anim(dt, alfa, cut_timer, x ,y)
 
     local runner = false
 
