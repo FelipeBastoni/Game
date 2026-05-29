@@ -450,8 +450,8 @@ function love.update(dt)
         it = it + 1
 
         item[it] = {}
-        item[it].x = 150 * it
-        item[it].y = 100
+        item[it].x = 4300 + (100 * it)
+        item[it].y = 1100
         item[it].tipo = "vida"
         item[it].id = it
 
