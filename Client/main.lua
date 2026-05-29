@@ -612,16 +612,19 @@ function love.update(dt)
     
     print(mira_ang)
 
-    if mira_ang >= -1.6 then
-
-        mira_arma = mira_ang
-
+    if mira_ang < 1.4 and mira_ang > -1.4 then
+        glock = love.graphics.newImage("cenario/noth.png")
+        
     end
 
-    if mira_ang > 1.6 then
- 
-        mira_arma = 0
-
+    if mira_ang > 1.6 or mira_ang < -1.6 then
+        glock = love.graphics.newImage("inimigos/glock2.png")
+        mira_arma = mira_ang
+    
+    else
+        glock = love.graphics.newImage("inimigos/glock.png")
+        mira_arma = mira_ang
+    
     end
 
     
@@ -860,8 +863,8 @@ function love.update(dt)
 
         function drawtiro(a)
 
-            shoot[a].x = shoot[a].x + math.cos(shoot[a].ang) * 10
-            shoot[a].y = shoot[a].y + math.sin(shoot[a].ang) * 10 
+            shoot[a].x = shoot[a].x + math.cos(shoot[a].ang) * 45
+            shoot[a].y = shoot[a].y + math.sin(shoot[a].ang) * 45
 
             love.graphics.draw(tiro, shoot[a].x, shoot[a].y, shoot[a].ang, 1, 1, tiro:getWidth()/2, tiro:getHeight()/2)
 
@@ -1104,6 +1107,40 @@ function love.update(dt)
 
     end
 
+
+    if runner == 3 then
+
+
+
+
+
+    end
+
+
+    if runner == 4 then
+
+
+
+
+
+    end
+
+
+
+    if runner == 5 then
+
+
+
+
+
+    end
+
+
+
+
+
+
+
 end
 
 
@@ -1283,8 +1320,8 @@ function love.draw()
 
     --Gera Personagem
 
-        love.graphics.draw(player.sprite, player.x, player.y, 0, conversor, conversor)
-        love.graphics.draw(glock, player.x+player.w-30, player.y+player.h-75, mira_arma)
+        love.graphics.draw(player.sprite, player.x, player.y)
+        love.graphics.draw(glock, player.x+player.w-45, player.y+player.h-55, mira_arma)
 
     --Executa
 
