@@ -24,10 +24,10 @@ function drawed.draw(coli ,calcada, rua, rua_esq, rua_c, rua_b, gramagrande, map
 
                 love.graphics.draw(coli, (j*tile_height), (i*tile_width))
             elseif (mapa[i][j] == "E") then
-                love.graphics.draw(rua_esq, (j*tile_height), (i*tile_width))
+                love.graphics.draw(rua, (j*tile_height), (i*tile_width))
             
             elseif (mapa[i][j] == "D") then
-                love.graphics.draw(rua, (j*tile_height), (i*tile_width))
+                love.graphics.draw(rua_esq, (j*tile_height), (i*tile_width))
             
             elseif (mapa[i][j] == "T") then
                 love.graphics.draw(rua_c, (j*tile_height), (i*tile_width))
