@@ -78,17 +78,6 @@ function drawed.draw(coli, paredeap_cima, chao_ap, muro_cima, muro_canto, calcad
                 love.graphics.draw(gramagrande, (j*tile_height), (i*tile_width))
             
 
-            elseif (mapa[i][j] == "m") then           
-                love.graphics.draw(muro_canto, (j*tile_height), (i*tile_width))            
-
-                
-                table.insert(co_mun, {
-
-                x = j*tile_width,
-                y = i*tile_height,
-                w = 192,
-                h = 192})
-
             elseif (mapa[i][j] == "P") then           
                 love.graphics.draw(paredeap_cima, (j*tile_height), (i*tile_width))            
 

@@ -129,6 +129,10 @@ function love.load()
     mapa = {}
     soft = {}
     enf_brut = {}
+    enf_atr = {}
+
+    runner = 0
+
 
   --Altura da imagem (tile)
     tile_height = 192
@@ -144,25 +148,79 @@ function love.load()
     v_tiles = 0      
     sv_tiles = 0 
 
+    brut_h_tiles = 0
+    brut_v_tiles = 0
+
+    atr_h_tiles = 0
+    atr_v_tiles = 0
+
+
   --Ponto esquerdo do cenário que será apresentado
     left_corner = 1 
 
   --Array de colisões do mapa
     co_mun = {}
 
- --Carrega o Cenário
-    mapa, h_tiles, v_tiles = l_mapa.LoadMap("mapa.txt") 
 
-    enf_brut, brut_h_tiles, brut_v_tiles =l_mapa.LoadMap("enf_brut.txt")
 
-    soft, sh_tiles, sv_tiles = l_mapa.Loadsoft("soft.txt")
-
+    
 end
 
 
 
 --Processos por Frame
 function love.update(dt)
+
+    if runner == 0 then
+
+     --Carrega o Cenário
+        mapa, h_tiles, v_tiles = l_mapa.LoadMap("mapa.txt") 
+
+        enf_brut, brut_h_tiles, brut_v_tiles =l_mapa.LoadMapEnf("enf_brut.txt")
+
+        soft, sh_tiles, sv_tiles = l_mapa.Loadsoft("soft.txt")
+
+    end
+
+    if runner == 5 then
+
+     --Carrega o Cenário
+        mapa, h_tiles, v_tiles = l_mapa.LoadMap("mapa2.txt") 
+
+        enf_brut, brut_h_tiles, brut_v_tiles =l_mapa.LoadMapEnf("enf_brut2.txt")
+
+        soft, sh_tiles, sv_tiles = l_mapa.Loadsoft("soft2.txt")
+
+    end
+
+    
+    if runner == 7 then
+
+     --Carrega o Cenário
+        mapa, h_tiles, v_tiles = l_mapa.LoadMap("mapa3.txt") 
+
+        enf_brut, brut_h_tiles, brut_v_tiles =l_mapa.LoadMapEnf("enf_brut3.txt")
+
+        soft, sh_tiles, sv_tiles = l_mapa.Loadsoft("soft3.txt")
+
+    end
+
+
+    if runner == 9 then
+
+     --Carrega o Cenário
+        mapa, h_tiles, v_tiles = l_mapa.LoadMap("mapa4.txt") 
+
+        enf_brut, brut_h_tiles, brut_v_tiles =l_mapa.LoadMapEnf("enf_brut4.txt")
+
+        soft, sh_tiles, sv_tiles = l_mapa.Loadsoft("soft4.txt")
+
+        enf_atr, atr_h_tiles, atr_v_tiles = l_mapa.LoadMapEnf("enf_atr4.txt") 
+
+    end
+
+
+
 
  
 --Gera Cenário e colisão
@@ -174,6 +232,16 @@ function love.update(dt)
 
     drawed.draw_soft(soft, sv_tiles, sh_tiles, 32, 32, left_corner)
 
+
+--Gera
+
+    drawed.draw_brut_enf(enf_brut, brut_v_tiles, brut_h_tiles, tile_width, tile_height, left_corner, conversor)
+
+    if runner == 5 then
+
+        drawed.draw_brut_atr(enf_atr, v_tiles, h_tiles, tile_width, tile_height, left_corner, conversor)
+
+    end
 
 
 --Verifica a colisão
@@ -313,7 +381,7 @@ function love.update(dt)
                 if t[1] == "newstage" then
 
                     messager_all_minus(event.peer, "newstage", t[2], 0, 0, id)
-                    print("mandei patrão")
+                    runner = t[2]
 
                 end
 
@@ -359,10 +427,10 @@ function love.update(dt)
     --Cria Inimigos
 
         inimigo[i] = {}
-        inimigo[i].x = x
-        inimigo[i].y = y
+        inimigo[i].x = 1800
+        inimigo[i].y = 800
         inimigo[i].w = 145
-        inimigo[i].h = 174
+        inimigo[i].h = 170
         inimigo[i].status = "vivo"
         inimigo[i].position = ""
         inimigo[i].tipo = ""
@@ -433,7 +501,10 @@ function love.update(dt)
 
                 if inimigo[v].status == "morto" then
 
-                    messager_all("loadi", 0, 0, inimigo[id].status, id)
+                    messager_all("loadi", 0, 0, inimigo[v].status, v)
+
+                    host:flush()
+
 
                 end
 

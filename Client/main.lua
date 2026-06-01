@@ -442,9 +442,9 @@ function processPacket(t)
 
         inimigo[idip] = {}
         inimigo[idip].x = t[2]
-        inimigo[idip].y = 0
-        inimigo[idip].w = 96
-        inimigo[idip].h = 96
+        inimigo[idip].y = t[3]
+        inimigo[idip].w = 145
+        inimigo[idip].h = 174
         inimigo[idip].speed = "vivo"
         inimigo[idip].position = ""
         inimigo[idip].sprite = zumbi
@@ -584,7 +584,32 @@ function processPacket(t)
 
     if t[1] == "newstage" then
 
-        runner = t[2]
+        runner = tonumber(t[2])
+
+        if runner == 3 then
+
+            player.x = 1749
+            player.y = 1441
+
+        end
+
+
+        if runner == 4 then
+
+            player.x = 1841
+            player.y = 779
+
+        end
+
+
+        if runner == 5 then
+
+            player.x = 1890
+            player.y = 3488
+
+        end
+
+
 
     end
 
@@ -818,7 +843,7 @@ function love.update(dt)
             bry_d = 16
             board_d = 2
 
-        elseif tamanho_d == 0 then
+        elseif tamanho_d <= 0 then
 
             braltura_d = 0
             brx_d = 0
@@ -986,7 +1011,7 @@ function love.update(dt)
                         if player.alive then
 
                             if tamanho_d <= 0 then
-                                tamanho_v = tamanho_v - 3
+                                tamanho_v = tamanho_v - 1.5
                                 damage_timer = 0
 
                                 if tamanho_v <= 0 then
@@ -1023,10 +1048,6 @@ function love.update(dt)
                             
                             messager("at_ini",10,0,0, inimigo[t].id)
                             
-                            
-                            tamanho_s = 0
-
-
 
                         end
 
@@ -1097,7 +1118,7 @@ function love.update(dt)
     end
 
 
-    if runner == 2 then --Apartamento
+    if runner == 2 then 
 
     --Carrega o Cenário
         mapa, h_tiles, v_tiles = l_mapa.LoadMap("mapa.txt") 
@@ -1106,6 +1127,12 @@ function love.update(dt)
         
         soft, sh_tiles, sv_tiles = l_mapa.Loadsoft("soft.txt")
 
+        runner = 3
+
+    end
+
+
+    if runner == 3 then --Apartamento
 
         if player.x <= 1152 then
 
@@ -1135,7 +1162,7 @@ function love.update(dt)
 
             player.x = 1749
             player.y = 1441
-            runner = 3
+            runner = 4
             messager("newstage", runner, 0, 0, id)
 
 
@@ -1152,7 +1179,7 @@ function love.update(dt)
     end
 
 
-    if runner == 3 then --Rua do apartamento
+    if runner == 4 then 
 
     --Carrega o Cenário
         mapa, h_tiles, v_tiles = l_mapa.LoadMap("mapa2.txt") 
@@ -1161,6 +1188,12 @@ function love.update(dt)
         
         soft, sh_tiles, sv_tiles = l_mapa.Loadsoft("soft2.txt")
 
+        runner = 5
+
+    end
+
+
+    if runner == 5 then --Rua do apartamento
 
         if player.x <= 1152 then
 
@@ -1190,7 +1223,8 @@ function love.update(dt)
 
             player.x = 1841
             player.y = 779
-            runner = 4
+            runner = 6
+            messager("newstage", runner, 0, 0, id)
 
         end
 
@@ -1204,7 +1238,7 @@ function love.update(dt)
     end
 
 
-    if runner == 4 then --Praça
+    if runner == 6 then 
 
 
     --Carrega o Cenário
@@ -1214,6 +1248,12 @@ function love.update(dt)
         
         soft, sh_tiles, sv_tiles = l_mapa.Loadsoft("soft3.txt")
 
+        runner = 7
+
+    end
+
+
+    if runner == 7 then --Praça
 
         if player.y <= 628 then
 
@@ -1226,7 +1266,8 @@ function love.update(dt)
 
             player.x = 1890
             player.y = 3488
-            runner = 5
+            runner = 8
+            messager("newstage", runner, 0, 0, id)
         
         end
 
@@ -1241,7 +1282,7 @@ function love.update(dt)
 
 
 
-    if runner == 5 then --Emissora
+    if runner == 8 then 
 
 
     --Carrega o Cenário
@@ -1253,7 +1294,13 @@ function love.update(dt)
 
         soft, sh_tiles, sv_tiles = l_mapa.Loadsoft("soft4.txt")
 
+        runner = 9
 
+
+    end
+
+
+    if runner == 9 then --Emissora
 
         if player.x <= 1080 then
 
@@ -1484,7 +1531,7 @@ function love.draw()
         love.graphics.draw(player.sprite, player.x, player.y)
         love.graphics.draw(glock, player.x+player.w-45, player.y+player.h-55, mira_arma)
 
-        if runner == 5 then
+        if runner == 9 then
 
             drawed.draw_brut_atr(noth, porta_ap, parede_ap, ponto_onibus, muro, grade, enf_atr, v_tiles, h_tiles, tile_width, tile_height, left_corner, conversor)
 
