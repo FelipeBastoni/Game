@@ -52,6 +52,10 @@ function love.load()
 
   --Imagens do Cenário
 
+    paredeap_cima = love.graphics.newImage("cenario/cimaparedeap.png") 
+    porta_ap = love.graphics.newImage("cenario/portaap.png")
+    parede_ap = love.graphics.newImage("cenario/paredeap.png")
+    chao_ap = love.graphics.newImage("cenario/chaoap.png")
     calcada = love.graphics.newImage("cenario/calcada.png")
     coli = love.graphics.newImage("cenario/coli.png")
     rua = love.graphics.newImage("cenario/ruaed.png")
@@ -74,6 +78,8 @@ function love.load()
     nada = love.graphics.newImage("cenario/nada.png")
     ponto_onibus = love.graphics.newImage("cenario/ponto_de_onibus.png")
     muro = love.graphics.newImage("cenario/muro.png")
+    muro_cima = love.graphics.newImage("cenario/muro_cima.png")
+    muro_canto = love.graphics.newImage("cenario/muro_canto.png")
     grade = love.graphics.newImage("cenario/grade.png")
 
 
@@ -127,7 +133,7 @@ function love.load()
 
     player = {}
     player.x = 300
-    player.y = 200
+    player.y = 1000
     player.w = 145
     player.h = 170
     player.speed = 1500  
@@ -270,6 +276,7 @@ function love.load()
     mapa = {}
     soft = {}
     enf_brut = {}
+    enf_atr = {}
 
   --Altura da imagem (tile)
     tile_height = 192
@@ -290,17 +297,15 @@ function love.load()
     brut_v_tiles = 0
 
 
+    atr_h_tiles = 0
+    atr_v_tiles = 0
+
   --Ponto esquerdo do cenário que será apresentado
     left_corner = 1 
 
 
 
- --Carrega o Cenário
-    mapa, h_tiles, v_tiles = l_mapa.LoadMap("mapa.txt") 
 
-    enf_brut, brut_h_tiles, brut_v_tiles = l_mapa.LoadMapEnf("enf_brut.txt") 
-    
-    soft, sh_tiles, sv_tiles = l_mapa.Loadsoft("soft.txt")
 
 end
 
@@ -574,6 +579,18 @@ function processPacket(t)
 
     end
 
+
+  --Atualização de stage
+
+    if t[1] == "newstage" then
+
+        runner = t[2]
+
+    end
+
+
+
+
 end
 
 
@@ -610,8 +627,6 @@ function love.update(dt)
 
     mira_ang = math.atan2((mira_y - (player.y + player.h/2)), (mira_x - player.x))
     
-    print(mira_ang)
-
     if mira_ang < 1.4 and mira_ang > -1.4 then
         glock = love.graphics.newImage("cenario/noth.png")
         
@@ -884,35 +899,9 @@ function love.update(dt)
 
     end
 
+    function colisao_default()
 
-
-    if runner == 2 then
-
-        if player.x <= 1152 then
-
-            player.x = 1152
-
-        end
-
-        if player.x >= 7680 then
-
-            player.x = 7680
-
-        end
         
-        if player.y <= 590 then
-
-            player.y = 590
-
-        end
-
-        if player.y >= 4416 then
-
-            player.y = 4416
-
-        end
-
-
 
         for j=1, #co_mun, 1 do
             
@@ -958,7 +947,7 @@ function love.update(dt)
         
     --Colisão
 
-        if runner == 2 and #inimigo > 0 then
+        if #inimigo > 0 then
 
             for j=1, #inimigo, 1 do
                 
@@ -1062,7 +1051,7 @@ function love.update(dt)
 
 
         
-        if runner == 2 and #item > 0 then
+        if #item > 0 then
 
             for pi=1, #item, 1 do
                 
@@ -1104,31 +1093,203 @@ function love.update(dt)
 
         end
 
+    
+    end
+
+
+    if runner == 2 then --Apartamento
+
+    --Carrega o Cenário
+        mapa, h_tiles, v_tiles = l_mapa.LoadMap("mapa.txt") 
+
+        enf_brut, brut_h_tiles, brut_v_tiles = l_mapa.LoadMapEnf("enf_brut.txt") 
+        
+        soft, sh_tiles, sv_tiles = l_mapa.Loadsoft("soft.txt")
+
+
+        if player.x <= 1152 then
+
+            player.x = 1152
+
+        end
+
+        if player.x >= 7680 then
+
+            player.x = 7680
+
+        end
+        
+        if player.y <= 590 then
+
+            player.y = 590
+
+        end
+
+        if player.y >= 4416 and player.x < 6600 then
+
+            player.y = 4416
+
+        end
+
+        if player.y >= 3293 then
+
+            player.x = 1749
+            player.y = 1441
+            runner = 3
+            messager("newstage", runner, 0, 0, id)
+
+
+        end
+
+
+
+        colisao_default()
+        print(player.x)
+        print(player.y)
+        co_mun = {}
+
 
     end
 
 
-    if runner == 3 then
+    if runner == 3 then --Rua do apartamento
+
+    --Carrega o Cenário
+        mapa, h_tiles, v_tiles = l_mapa.LoadMap("mapa2.txt") 
+
+        enf_brut, brut_h_tiles, brut_v_tiles = l_mapa.LoadMapEnf("enf_brut2.txt") 
+        
+        soft, sh_tiles, sv_tiles = l_mapa.Loadsoft("soft2.txt")
 
 
+        if player.x <= 1152 then
 
+            player.x = 1152
+
+        end
+
+        if player.x >= 7680 then
+
+            player.x = 7680
+
+        end
+        
+        if player.y <= 590 then
+
+            player.y = 590
+
+        end
+
+        if player.y >= 4416 and player.x < 6600 then
+
+            player.y = 4416
+
+        end
+
+        if player.y >= 5300 and player.x > 6600 then
+
+            player.x = 1841
+            player.y = 779
+            runner = 4
+
+        end
+
+
+        print(player.x)
+        print(player.y)
+        colisao_default()
+        co_mun = {}
 
 
     end
 
 
-    if runner == 4 then
+    if runner == 4 then --Praça
 
 
+    --Carrega o Cenário
+        mapa, h_tiles, v_tiles = l_mapa.LoadMap("mapa3.txt") 
 
+        enf_brut, brut_h_tiles, brut_v_tiles = l_mapa.LoadMapEnf("enf_brut3.txt") 
+        
+        soft, sh_tiles, sv_tiles = l_mapa.Loadsoft("soft3.txt")
+
+
+        if player.y <= 628 then
+
+            player.y = 628
+
+        end
+
+
+         if player.y >= 3680 and player.x > 8505 then
+
+            player.x = 1890
+            player.y = 3488
+            runner = 5
+        
+        end
+
+
+        print(player.x)
+        print(player.y)
+        colisao_default()
+        co_mun = {}
 
 
     end
 
 
 
-    if runner == 5 then
+    if runner == 5 then --Emissora
 
+
+    --Carrega o Cenário
+        mapa, h_tiles, v_tiles = l_mapa.LoadMap("mapa4.txt") 
+
+        enf_brut, brut_h_tiles, brut_v_tiles = l_mapa.LoadMapEnf("enf_brut4.txt") 
+        
+        enf_atr, atr_h_tiles, atr_v_tiles = l_mapa.LoadMapEnf("enf_atr4.txt") 
+
+        soft, sh_tiles, sv_tiles = l_mapa.Loadsoft("soft4.txt")
+
+
+
+        if player.x <= 1080 then
+
+            player.x = 1080
+
+        end
+
+        -- if player.x >= 7680 then
+
+        --     player.x = 7680
+
+        -- end
+        
+        -- if player.y <= 590 then
+
+        --     player.y = 590
+
+        -- end
+
+        -- if player.y >= 4416 and player.x < 6600 then
+
+        --     player.y = 4416
+
+        -- end
+
+        -- if player.y >= 5300 and player.x > 6600 then
+
+        --     player.x = 200
+        --     player.y = 200
+        
+        -- end
+
+
+        print(player.x)
+        print(player.y)
+        colisao_default()
 
 
 
@@ -1214,7 +1375,7 @@ function love.draw()
 
   --Jogo rodando
 
-    if runner == 2 and player.alive == true then
+    if runner >= 2 and player.alive == true then
 
 
     --Tamanho da tela
@@ -1249,12 +1410,12 @@ function love.draw()
 
     --Gera Cenário e colisão
 
-        drawed.draw(coli ,calcada, rua, rua_esq, rua_c, rua_b, gramagrande, mapa, v_tiles, h_tiles, tile_width, tile_height, left_corner, conversor)
+        drawed.draw(coli, paredeap_cima, chao_ap, muro_cima, muro_canto, calcada, rua, rua_esq, rua_c, rua_b, gramagrande, mapa, v_tiles, h_tiles, tile_width, tile_height, left_corner, conversor)
 
 
     --Gera cenário de enfeite bruto
     
-        drawed.draw_brut_enf(nada, ponto_onibus, muro, grade, enf_brut, brut_v_tiles, brut_h_tiles, tile_width, tile_height, left_corner, conversor)
+        drawed.draw_brut_enf(nada, porta_ap, parede_ap, ponto_onibus, muro, grade, enf_brut, brut_v_tiles, brut_h_tiles, tile_width, tile_height, left_corner, conversor)
 
 
     --Gera cenário "Soft" e colisão
@@ -1322,6 +1483,13 @@ function love.draw()
 
         love.graphics.draw(player.sprite, player.x, player.y)
         love.graphics.draw(glock, player.x+player.w-45, player.y+player.h-55, mira_arma)
+
+        if runner == 5 then
+
+            drawed.draw_brut_atr(noth, porta_ap, parede_ap, ponto_onibus, muro, grade, enf_atr, v_tiles, h_tiles, tile_width, tile_height, left_corner, conversor)
+
+        end
+
 
     --Executa
 

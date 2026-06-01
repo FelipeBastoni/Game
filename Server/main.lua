@@ -128,6 +128,7 @@ function love.load()
   --Array para procesamento do mapa
     mapa = {}
     soft = {}
+    enf_brut = {}
 
   --Altura da imagem (tile)
     tile_height = 192
@@ -151,6 +152,8 @@ function love.load()
 
  --Carrega o Cenário
     mapa, h_tiles, v_tiles = l_mapa.LoadMap("mapa.txt") 
+
+    enf_brut, brut_h_tiles, brut_v_tiles =l_mapa.LoadMap("enf_brut.txt")
 
     soft, sh_tiles, sv_tiles = l_mapa.Loadsoft("soft.txt")
 
@@ -303,6 +306,14 @@ function love.update(dt)
                 if t[1] == "death" then
 
                     party[id].status = "morto"
+
+                end
+
+
+                if t[1] == "newstage" then
+
+                    messager_all_minus(event.peer, "newstage", t[2], 0, 0, id)
+                    print("mandei patrão")
 
                 end
 
