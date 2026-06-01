@@ -161,7 +161,9 @@ function love.load()
   --Array de colisões do mapa
     co_mun = {}
 
-
+    down = 0
+    spawn_time = 0
+    mensagem = "não chegou"
 
     
 end
@@ -170,6 +172,9 @@ end
 
 --Processos por Frame
 function love.update(dt)
+
+    spawn_time = spawn_time + dt
+
 
     if runner == 0 then
 
@@ -180,9 +185,12 @@ function love.update(dt)
 
         soft, sh_tiles, sv_tiles = l_mapa.Loadsoft("soft.txt")
 
+        mensagem = "no ap"
+
+
     end
 
-    if runner == 5 then
+    if runner == 4 then
 
      --Carrega o Cenário
         mapa, h_tiles, v_tiles = l_mapa.LoadMap("mapa2.txt") 
@@ -191,10 +199,20 @@ function love.update(dt)
 
         soft, sh_tiles, sv_tiles = l_mapa.Loadsoft("soft2.txt")
 
+        mensagem = "chegou na rua"
+
+        if spawn_time > 0.5 then 
+
+            spawn_inimigo()
+            spawn_time = 0 
+
+        end
+
+
     end
 
     
-    if runner == 7 then
+    if runner == 6 then
 
      --Carrega o Cenário
         mapa, h_tiles, v_tiles = l_mapa.LoadMap("mapa3.txt") 
@@ -203,10 +221,13 @@ function love.update(dt)
 
         soft, sh_tiles, sv_tiles = l_mapa.Loadsoft("soft3.txt")
 
+        mensagem = "na praça"
+
+
     end
 
 
-    if runner == 9 then
+    if runner == 8 then
 
      --Carrega o Cenário
         mapa, h_tiles, v_tiles = l_mapa.LoadMap("mapa4.txt") 
@@ -363,6 +384,7 @@ function love.update(dt)
                     if inimigo[id].vida <= 0 then
 
                         inimigo[id].status = "morto"
+                        down = down + 1
 
                     end
 
@@ -422,27 +444,7 @@ function love.update(dt)
     
     if love.keyboard.isDown("n") and ruler >= 0.75 then
 
-        i = i + 1
-
-    --Cria Inimigos
-
-        inimigo[i] = {}
-        inimigo[i].x = 1800
-        inimigo[i].y = 800
-        inimigo[i].w = 145
-        inimigo[i].h = 170
-        inimigo[i].status = "vivo"
-        inimigo[i].position = ""
-        inimigo[i].tipo = ""
-        inimigo[i].vida = 100
-        inimigo[i].segue = sorteia()
-
-        print("Criado" ..i)
-
-        messager_all("newi", x, y, inimigo[i].status, i)
-
-        ruler = 0
-
+        spawn_inimigo()
 
     end
     
@@ -562,8 +564,30 @@ function love.update(dt)
 
 end
 
+function spawn_inimigo()
 
+    i = i + 1
 
+--Cria Inimigos
+
+    inimigo[i] = {}
+    inimigo[i].x = 1800
+    inimigo[i].y = 800
+    inimigo[i].w = 145
+    inimigo[i].h = 170
+    inimigo[i].status = "vivo"
+    inimigo[i].position = ""
+    inimigo[i].tipo = ""
+    inimigo[i].vida = 100
+    inimigo[i].segue = sorteia()
+
+    print("Criado" ..i)
+
+    messager_all("newi", x, y, inimigo[i].status, i)
+
+    ruler = 0
+
+end
 
 
 function checkCollision(a, b)
@@ -585,3 +609,12 @@ function sorteia()
     return sort
 end
 
+
+function love.draw()
+
+    love.graphics.print(spawn_time, 10, 20)
+    love.graphics.print(runner, 10, 40)
+    love.graphics.print(mensagem, 10, 60)
+
+
+end

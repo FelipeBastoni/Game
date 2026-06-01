@@ -896,6 +896,7 @@ function love.update(dt)
             shoot[a].h = 5
             shoot[a].ang = mira_ang
             shoot[a].id = a
+            shoot[a].status = "on"
 
             drawtiro(a)
 
@@ -903,10 +904,24 @@ function love.update(dt)
 
         function drawtiro(a)
 
-            shoot[a].x = shoot[a].x + math.cos(shoot[a].ang) * 45
-            shoot[a].y = shoot[a].y + math.sin(shoot[a].ang) * 45
+            if shoot[a].status == "on" then
 
-            love.graphics.draw(tiro, shoot[a].x, shoot[a].y, shoot[a].ang, 1, 1, tiro:getWidth()/2, tiro:getHeight()/2)
+                shoot[a].x = shoot[a].x + math.cos(shoot[a].ang) * 45
+                shoot[a].y = shoot[a].y + math.sin(shoot[a].ang) * 45
+
+                love.graphics.draw(tiro, shoot[a].x, shoot[a].y, shoot[a].ang, 1, 1, tiro:getWidth()/2, tiro:getHeight()/2)
+
+            end
+
+            if shoot[a].status == "off" then
+                
+                shoot[a].x = 0
+                shoot[a].y = 0
+                shoot[a].w = 0
+                shoot[a].h = 0
+
+
+            end
 
         end
 
@@ -1037,17 +1052,30 @@ function love.update(dt)
 
             end
 
+        end
+
+        nvx = player.x
+        nvy = player.y
+
+
+
+    --Checa interação com item
+
+
+        if #shoot > 0 then
             
-            if #shoot > 0 and #inimigo > 0 then
+            if #inimigo > 0 then
 
                 for r=1, #shoot, 1 do
-                    for t=1, #inimigo, 1 do 
 
-                        if checkTiro(inimigo[t], shoot[r]) then
+                    if shoot[r].status == "on" then
 
-                            
-                            messager("at_ini",10,0,0, inimigo[t].id)
-                            
+                        for t=1, #inimigo, 1 do 
+
+                            if checkTiro(inimigo[t], shoot[r]) then
+                                shoot[r].status = "off"
+                                messager("at_ini",10,0,0, inimigo[t].id)                            
+                            end
 
                         end
 
@@ -1057,18 +1085,28 @@ function love.update(dt)
             end
 
 
-
         
+            for t=1, #shoot, 1 do
 
+                if shoot[t].status == "on" then
+
+                    for j=1, #co_mun, 1 do
+
+                        v_colisao_a = co_mun[j]
+
+                        if checkCorr(shoot[t], v_colisao_a) then
+                            shoot[t].status = "off"
+                        end
+
+                    end
+
+                end
+
+            end
+    
 
         end
 
-        nvx = player.x
-        nvy = player.y
-
-
-
-    --Checa interação com item
 
 
         
@@ -1518,7 +1556,13 @@ function love.draw()
         if a > 0 then
 
             for u=1, a ,1 do
-                drawtiro(u)
+
+                if shoot[u].status == "on" then
+
+                    drawtiro(u)
+                    
+                end
+
             end
 
         end
